@@ -55,7 +55,11 @@ export function registerIpcHandlers(win: BrowserWindow): void {
   ipcMain.handle(IPC.settingsGet, (_e, key: string) => getSetting(key))
   ipcMain.handle(IPC.settingsSet, (_e, key: string, value: string) => {
     setSetting(key, value)
-    if (key === SETTING_KEYS.enginePath || key === SETTING_KEYS.engineDepth) {
+    if (
+      key === SETTING_KEYS.enginePath ||
+      key === SETTING_KEYS.engineDepth ||
+      key === SETTING_KEYS.enginePoolSize
+    ) {
       analysisQueue.resetPool()
     }
   })
@@ -73,10 +77,10 @@ export function registerIpcHandlers(win: BrowserWindow): void {
     syncRunning = true
     ;(async () => {
       try {
-        await syncGames(username, (p: SyncProgress) => send(IPC.evSyncProgress, p))
-        // enqueueAllPending orders newest-first, which is the order the user
-        // cares about — don't pre-enqueue newIds (insertion order = oldest first).
-        analysisQueue.enqueueAllPending()
+        const newIds = await syncGames(username, (p: SyncProgress) => send(IPC.evSyncProgress, p))
+        // Auto-analyze only the newest handful of fresh games; the rest stay
+        // pending until the user opens them or clicks "Analyze all".
+        analysisQueue.enqueue(newIds.reverse().slice(0, 30))
       } catch (e) {
         const message =
           e instanceof ChesscomError ? e.message : `Sync failed: ${(e as Error).message}`
@@ -105,6 +109,10 @@ export function registerIpcHandlers(win: BrowserWindow): void {
     const game = getGameSummary(gameId)
     const pgn = getGamePgn(gameId)
     if (!game || !pgn) return null
+    // Opening an unanalyzed game bumps it to the front of the queue.
+    if (game.analysisStatus === 'pending' || game.analysisStatus === 'error') {
+      analysisQueue.enqueueFront(gameId)
+    }
     return {
       game,
       pgn,
@@ -123,6 +131,8 @@ export function registerIpcHandlers(win: BrowserWindow): void {
     ...analysisQueue.status(),
     pendingTotal: listPendingGameIds().length
   }))
+  ipcMain.handle(IPC.analysisPause, () => analysisQueue.pause())
+  ipcMain.handle(IPC.analysisResume, () => analysisQueue.resume())
 
   // --- engine ---
   ipcMain.handle(IPC.engineStatus, () => locateStockfish())

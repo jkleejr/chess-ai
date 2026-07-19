@@ -138,6 +138,11 @@ export function listPendingGameIds(): number[] {
   ).map((r) => r.id)
 }
 
+/** Games interrupted mid-analysis by an app quit go back to pending (not enqueued). */
+export function resetStuckAnalyzing(): void {
+  getDb().prepare("UPDATE games SET analysis_status = 'pending' WHERE analysis_status = 'analyzing'").run()
+}
+
 export function setAnalysisStatus(id: number, status: AnalysisStatus): void {
   getDb().prepare('UPDATE games SET analysis_status = ? WHERE id = ?').run(status, id)
 }

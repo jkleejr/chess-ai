@@ -30,12 +30,22 @@ export default function GameList(): React.JSX.Element {
   const [total, setTotal] = useState(0)
   const [filter, setFilter] = useState<GameListFilter>({})
   const [limit, setLimit] = useState(PAGE)
+  const [pendingTotal, setPendingTotal] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const [queueActive, setQueueActive] = useState(false)
   const { startSync, syncProgress } = useAppStore()
 
   const load = useCallback(async () => {
-    const [rows, count] = await Promise.all([api.listGames(0, limit, filter), api.countGames()])
+    const [rows, count, status] = await Promise.all([
+      api.listGames(0, limit, filter),
+      api.countGames(),
+      api.analysisStatus()
+    ])
     setGames(rows)
     setTotal(count)
+    setPendingTotal(status.pendingTotal)
+    setPaused(status.paused)
+    setQueueActive(status.queued > 0 || status.currentGameId !== null)
   }, [filter, limit])
 
   useEffect(() => {
@@ -83,6 +93,26 @@ export default function GameList(): React.JSX.Element {
         <button onClick={() => void startSync()} disabled={syncing}>
           {syncing ? 'Syncing…' : '↻ Sync new games'}
         </button>
+        {pendingTotal > 0 && !queueActive && (
+          <button
+            onClick={() => {
+              void api.analysisResume()
+              void api.enqueueAnalysis('all-pending').then(load)
+            }}
+            title="Runs in the background at low CPU priority; you can pause anytime"
+          >
+            ⚙ Analyze all ({pendingTotal})
+          </button>
+        )}
+        {queueActive && (
+          <button
+            onClick={() =>
+              void (paused ? api.analysisResume() : api.analysisPause()).then(load)
+            }
+          >
+            {paused ? '▶ Resume analysis' : '⏸ Pause analysis'}
+          </button>
+        )}
         <span className="faint">
           {total} games{syncProgress?.phase === 'error' ? ` — ${syncProgress.message}` : ''}
         </span>

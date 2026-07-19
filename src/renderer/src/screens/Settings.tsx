@@ -11,6 +11,7 @@ export default function Settings(): React.JSX.Element {
   const [keyStatus, setKeyStatus] = useState<{ ok: boolean; error?: string } | null>(null)
   const [testing, setTesting] = useState(false)
   const [depth, setDepth] = useState('16')
+  const [poolSize, setPoolSize] = useState('2')
   const [autoCoach, setAutoCoach] = useState(false)
   const [modelPerGame, setModelPerGame] = useState('claude-haiku-4-5')
   const [modelReport, setModelReport] = useState('claude-sonnet-5')
@@ -20,10 +21,11 @@ export default function Settings(): React.JSX.Element {
 
   useEffect(() => {
     void (async () => {
-      const [u, hk, d, ac, mg, mr, es] = await Promise.all([
+      const [u, hk, d, ps, ac, mg, mr, es] = await Promise.all([
         api.getSetting('chesscom_username'),
         api.hasApiKey(),
         api.getSetting('engine_depth'),
+        api.getSetting('engine_pool_size'),
         api.getSetting('auto_coach'),
         api.getSetting('model_per_game'),
         api.getSetting('model_style_report'),
@@ -32,6 +34,7 @@ export default function Settings(): React.JSX.Element {
       setUsername(u ?? '')
       setHasKey(hk)
       setDepth(d ?? '16')
+      setPoolSize(ps ?? '2')
       setAutoCoach(ac === 'true')
       setModelPerGame(mg ?? 'claude-haiku-4-5')
       setModelReport(mr ?? 'claude-sonnet-5')
@@ -43,6 +46,7 @@ export default function Settings(): React.JSX.Element {
   const save = async (): Promise<void> => {
     await api.setSetting('chesscom_username', username.trim())
     await api.setSetting('engine_depth', depth)
+    await api.setSetting('engine_pool_size', poolSize)
     await api.setSetting('auto_coach', String(autoCoach))
     await api.setSetting('model_per_game', modelPerGame)
     await api.setSetting('model_style_report', modelReport)
@@ -145,6 +149,20 @@ export default function Settings(): React.JSX.Element {
             Higher = more accurate but slower. Depth {depth} ≈{' '}
             {Number(depth) <= 14 ? 'fast' : Number(depth) <= 18 ? 'balanced' : 'slow, strongest'}.
             Already-analyzed games are not re-analyzed.
+          </span>
+        </div>
+
+        <div className="field">
+          <label>Analysis CPU usage</label>
+          <select value={poolSize} onChange={(e) => setPoolSize(e.target.value)}>
+            <option value="1">Minimal — 1 engine, slowest</option>
+            <option value="2">Low — 2 engines (recommended)</option>
+            <option value="4">Medium — 4 engines</option>
+            <option value="6">High — 6 engines, fastest but laggy</option>
+          </select>
+          <span className="faint">
+            Engines run at low system priority either way; this caps how many CPU cores analysis
+            can occupy.
           </span>
         </div>
 

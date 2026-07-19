@@ -20,7 +20,12 @@ export class UciEngine {
   public version = ''
 
   constructor(binaryPath: string) {
-    this.proc = spawn(binaryPath, [], { stdio: ['pipe', 'pipe', 'pipe'] })
+    // Run at low CPU priority so analysis never competes with the user's
+    // foreground work. `nice` execs the engine, so the pid stays stockfish's.
+    this.proc =
+      process.platform === 'darwin' || process.platform === 'linux'
+        ? spawn('/usr/bin/nice', ['-n', '15', binaryPath], { stdio: ['pipe', 'pipe', 'pipe'] })
+        : spawn(binaryPath, [], { stdio: ['pipe', 'pipe', 'pipe'] })
     this.proc.on('exit', () => {
       this.dead = true
     })

@@ -3,6 +3,7 @@ import { app, BrowserWindow, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 import { closeDb, openDb } from './db/database'
+import { resetStuckAnalyzing } from './db/repos/gamesRepo'
 import { analysisQueue } from './engine/analysisQueue'
 import { registerIpcHandlers } from './ipc/handlers'
 
@@ -45,10 +46,11 @@ app.whenReady().then(() => {
   })
 
   openDb()
+  // Deliberately do NOT auto-analyze the backlog at startup — analysis runs
+  // for freshly synced games, opened games, and explicit "Analyze all" only.
+  resetStuckAnalyzing()
   const win = createWindow()
   registerIpcHandlers(win)
-  // Resume any analysis that was interrupted last session.
-  analysisQueue.enqueueAllPending()
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()

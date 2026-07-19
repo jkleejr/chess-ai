@@ -7,17 +7,22 @@ import { analyzeGame } from './analyzer'
 import { EnginePool } from './enginePool'
 import { locateStockfish } from './stockfishProvision'
 
-/**
- * Singleton FIFO queue over pending games. One game analyzed at a time; the
- * engine pool parallelizes positions within a game (best latency-to-first-result).
- */
 const MAX_ATTEMPTS = 3
 
+/**
+ * Singleton FIFO queue over pending games. One game analyzed at a time; a
+ * small, low-priority engine pool parallelizes positions within a game.
+ *
+ * Analysis is intentionally NOT automatic for the whole library: only freshly
+ * synced games (capped) and games the user opens are enqueued by default;
+ * "Analyze all" is an explicit action. Pausable at any time.
+ */
 class AnalysisQueue {
   private queue: number[] = []
   private queued = new Set<number>()
   private attempts = new Map<number, number>()
   private running = false
+  private paused = false
   private currentGameId: number | null = null
   private currentPct = 0
   private pool: EnginePool | null = null
@@ -42,16 +47,37 @@ class AnalysisQueue {
     void this.pump()
   }
 
+  /** Jump the queue — used when the user opens an unanalyzed game. */
+  enqueueFront(gameId: number): void {
+    if (this.queued.has(gameId)) {
+      this.queue = [gameId, ...this.queue.filter((id) => id !== gameId)]
+    } else {
+      this.queued.add(gameId)
+      this.queue.unshift(gameId)
+    }
+    void this.pump()
+  }
+
   enqueueAllPending(): void {
     this.enqueue(listPendingGameIds())
   }
 
-  status(): AnalysisStatusInfo {
+  pause(): void {
+    this.paused = true
+  }
+
+  resume(): void {
+    this.paused = false
+    void this.pump()
+  }
+
+  status(): AnalysisStatusInfo & { paused: boolean } {
     return {
       queued: this.queue.length,
       currentGameId: this.currentGameId,
       currentPct: this.currentPct,
-      analyzedTotal: countAnalyzed()
+      analyzedTotal: countAnalyzed(),
+      paused: this.paused
     }
   }
 
@@ -65,26 +91,27 @@ class AnalysisQueue {
     if (this.pool) return this.pool
     const status: EngineStatus = await locateStockfish()
     if (status.state !== 'ready' || !status.path) return null
-    this.pool = new EnginePool(status.path)
+    const size = Math.max(1, Math.min(6, parseInt(getSetting(SETTING_KEYS.enginePoolSize) ?? '2', 10)))
+    this.pool = new EnginePool(status.path, size)
     await this.pool.start()
     return this.pool
   }
 
-  /** Drop the pool so the next run re-locates the binary (e.g. after settings change). */
+  /** Drop the pool so the next run re-locates binary/settings. */
   resetPool(): void {
     this.pool?.shutdown()
     this.pool = null
   }
 
   private async pump(): Promise<void> {
-    if (this.running) return
+    if (this.running || this.paused) return
     this.running = true
     try {
       const pool = await this.ensurePool()
       if (!pool) return // engine not available yet; queue stays intact
 
       const depth = parseInt(getSetting(SETTING_KEYS.engineDepth) ?? '16', 10)
-      while (this.queue.length > 0) {
+      while (this.queue.length > 0 && !this.paused) {
         const gameId = this.queue.shift()!
         this.queued.delete(gameId)
         this.currentGameId = gameId
@@ -119,6 +146,8 @@ class AnalysisQueue {
       this.currentGameId = null
       this.currentPct = 0
       this.running = false
+      // Idle: release the engines entirely so background CPU drops to zero.
+      if (this.queue.length === 0) this.resetPool()
     }
   }
 

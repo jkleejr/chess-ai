@@ -36,7 +36,11 @@ export const api = {
   enqueueAnalysis: (target: number | 'all-pending') =>
     invoke('analysis:enqueue', target) as Promise<void>,
   analysisStatus: () =>
-    invoke('analysis:status') as Promise<AnalysisStatusInfo & { pendingTotal: number }>,
+    invoke('analysis:status') as Promise<
+      AnalysisStatusInfo & { pendingTotal: number; paused: boolean }
+    >,
+  analysisPause: () => invoke('analysis:pause') as Promise<void>,
+  analysisResume: () => invoke('analysis:resume') as Promise<void>,
 
   engineStatus: () => invoke('engine:status') as Promise<EngineStatus>,
   engineSetup: () => invoke('engine:setup') as Promise<EngineStatus>,

@@ -5,6 +5,7 @@ export const SETTING_KEYS = {
   username: 'chesscom_username',
   apiKeyEnc: 'anthropic_api_key_enc',
   engineDepth: 'engine_depth',
+  enginePoolSize: 'engine_pool_size',
   enginePath: 'stockfish_path',
   modelPerGame: 'model_per_game',
   modelStyleReport: 'model_style_report',
@@ -13,6 +14,7 @@ export const SETTING_KEYS = {
 
 export const DEFAULTS: Record<string, string> = {
   [SETTING_KEYS.engineDepth]: '16',
+  [SETTING_KEYS.enginePoolSize]: '2',
   [SETTING_KEYS.modelPerGame]: 'claude-haiku-4-5',
   [SETTING_KEYS.modelStyleReport]: 'claude-sonnet-5',
   [SETTING_KEYS.autoCoach]: 'false'

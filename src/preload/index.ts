@@ -14,6 +14,8 @@ const INVOKE_CHANNELS = [
   'games:count',
   'analysis:enqueue',
   'analysis:status',
+  'analysis:pause',
+  'analysis:resume',
   'engine:status',
   'engine:setup',
   'coach:explainGame',

@@ -13,6 +13,8 @@ export const IPC = {
   gamesCount: 'games:count',
   analysisEnqueue: 'analysis:enqueue',
   analysisStatus: 'analysis:status',
+  analysisPause: 'analysis:pause',
+  analysisResume: 'analysis:resume',
   engineStatus: 'engine:status',
   engineSetup: 'engine:setup',
   coachExplainGame: 'coach:explainGame',
