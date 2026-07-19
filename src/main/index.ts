@@ -38,8 +38,30 @@ function createWindow(): BrowserWindow {
   return mainWindow
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.chessai.coach')
+
+  // Headless dev harness: COACH_SMOKE_GAME=<id> runs one real coaching call
+  // (no window) and exits. Used to verify the pipeline without the UI.
+  if (process.env.COACH_SMOKE_GAME || process.env.STYLE_SMOKE) {
+    openDb()
+    try {
+      if (process.env.COACH_SMOKE_GAME) {
+        const { explainGame } = await import('./coach/gameCoach')
+        const insight = await explainGame(parseInt(process.env.COACH_SMOKE_GAME, 10))
+        console.log('COACH_SMOKE_OK ' + JSON.stringify(insight))
+      } else {
+        const { generateStyleReport } = await import('./coach/styleReport')
+        const report = await generateStyleReport()
+        console.log('STYLE_SMOKE_OK ' + JSON.stringify(report))
+      }
+    } catch (e) {
+      console.error('SMOKE_FAIL', (e as Error).message)
+      process.exitCode = 1
+    }
+    app.quit()
+    return
+  }
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)

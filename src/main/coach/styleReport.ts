@@ -32,7 +32,7 @@ export async function generateStyleReport(): Promise<StyleReport> {
   const client = getClient()
   const response = await client.messages.parse({
     model,
-    max_tokens: 8192,
+    max_tokens: 16000,
     system: [{ type: 'text', text: SYSTEM_COACH }],
     messages: [
       {
