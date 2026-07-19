@@ -38,7 +38,7 @@ function Shell(): React.JSX.Element {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand">
-          Chess <span>Analysis</span>
+          My <span>Chess</span>
         </div>
         <nav>
           <NavLink to="/games" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>

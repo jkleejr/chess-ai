@@ -1,4 +1,4 @@
-# Chess Analysis
+# My Chess
 
 A personal AI chess coach for macOS. It downloads your chess.com games, analyzes
 every move with a local Stockfish engine, and uses Claude to explain your
