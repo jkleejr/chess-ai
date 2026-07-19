@@ -1,5 +1,5 @@
 import { ipcMain, type BrowserWindow } from 'electron'
-import type { GameDetail, GameListFilter, SyncProgress } from '../../shared/types'
+import type { GameDetail, GameListFilter, StatsFilter, SyncProgress } from '../../shared/types'
 import { ChesscomError } from '../chesscom/client'
 import { syncGames } from '../chesscom/sync'
 import { NoApiKeyError, testApiKey } from '../coach/anthropicClient'
@@ -164,9 +164,11 @@ export function registerIpcHandlers(win: BrowserWindow): void {
   // --- profile / stats ---
   ipcMain.handle(IPC.profileGet, () => getProfile())
   ipcMain.handle(IPC.styleReportGet, () => getLatestStyleReport())
-  ipcMain.handle(IPC.statsOpenings, (_e, minGames?: number) => openingStats(minGames ?? 1))
-  ipcMain.handle(IPC.statsAccuracy, () => accuracyOverTime())
+  ipcMain.handle(IPC.statsOpenings, (_e, minGames?: number, filter?: StatsFilter) =>
+    openingStats(minGames ?? 1, filter)
+  )
+  ipcMain.handle(IPC.statsAccuracy, (_e, filter?: StatsFilter) => accuracyOverTime(filter))
   ipcMain.handle(IPC.statsTimeControls, () => timeControlStats())
   ipcMain.handle(IPC.statsMistakeTags, () => mistakeTagCounts())
-  ipcMain.handle(IPC.statsExtended, () => extendedStats())
+  ipcMain.handle(IPC.statsExtended, (_e, filter?: StatsFilter) => extendedStats(filter))
 }

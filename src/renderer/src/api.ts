@@ -12,6 +12,7 @@ import type {
   MoveExplanation,
   OpeningStat,
   PlayerProfile,
+  StatsFilter,
   TimeControlStat,
   StyleReport,
   SyncProgress
@@ -60,10 +61,13 @@ export const api = {
       gamesAnalyzed: number
     } | null>,
   getStyleReport: () => invoke('styleReport:get') as Promise<StyleReport | null>,
-  openingStats: (minGames?: number) => invoke('stats:openings', minGames) as Promise<OpeningStat[]>,
-  accuracyOverTime: () => invoke('stats:accuracy') as Promise<AccuracyPoint[]>,
+  openingStats: (minGames?: number, filter?: StatsFilter) =>
+    invoke('stats:openings', minGames, filter) as Promise<OpeningStat[]>,
+  accuracyOverTime: (filter?: StatsFilter) =>
+    invoke('stats:accuracy', filter) as Promise<AccuracyPoint[]>,
   mistakeTags: () => invoke('stats:mistakeTags') as Promise<{ tag: string; count: number }[]>,
-  extendedStats: () => invoke('stats:extended') as Promise<ExtendedStats>,
+  extendedStats: (filter?: StatsFilter) =>
+    invoke('stats:extended', filter) as Promise<ExtendedStats>,
   timeControlStats: () => invoke('stats:timeControls') as Promise<TimeControlStat[]>
 }
 

@@ -149,6 +149,12 @@ export interface GameListFilter {
   eco?: string
 }
 
+/** Optional scoping for stats queries: one category OR one exact control. */
+export interface StatsFilter {
+  timeClass?: string
+  timeControl?: string
+}
+
 /** Per-exact-time-control aggregates (e.g. "300", "180+2", "60"). */
 export interface TimeControlStat {
   timeControl: string

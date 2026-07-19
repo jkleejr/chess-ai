@@ -1,5 +1,19 @@
-import type { AccuracyPoint, OpeningStat, TimeControlStat } from '../../../shared/types'
+import type { AccuracyPoint, OpeningStat, StatsFilter, TimeControlStat } from '../../../shared/types'
 import { getDb } from '../database'
+
+function filterSql(filter?: StatsFilter): { cond: string; params: unknown[] } {
+  const conds: string[] = []
+  const params: unknown[] = []
+  if (filter?.timeClass) {
+    conds.push('g.time_class = ?')
+    params.push(filter.timeClass)
+  }
+  if (filter?.timeControl) {
+    conds.push('g.time_control = ?')
+    params.push(filter.timeControl)
+  }
+  return { cond: conds.length ? ` AND ${conds.join(' AND ')}` : '', params }
+}
 
 /** Win rate / accuracy per exact time control ("300", "180+2", …), most-played first. */
 export function timeControlStats(): TimeControlStat[] {
@@ -42,26 +56,27 @@ export function timeControlStats(): TimeControlStat[] {
   }))
 }
 
-export function openingStats(minGames = 1): OpeningStat[] {
+export function openingStats(minGames = 1, filter?: StatsFilter): OpeningStat[] {
+  const f = filterSql(filter)
   const rows = getDb()
     .prepare(
-      `SELECT eco_code AS eco,
-              COALESCE(opening_name, eco_code) AS name,
-              user_color AS color,
+      `SELECT g.eco_code AS eco,
+              COALESCE(g.opening_name, g.eco_code) AS name,
+              g.user_color AS color,
               COUNT(*) AS games,
-              SUM(result = 'win') AS wins,
-              SUM(result = 'loss') AS losses,
-              SUM(result = 'draw') AS draws,
-              AVG(CASE WHEN analysis_status = 'analyzed'
-                       THEN (CASE WHEN user_color = 'white' THEN accuracy_white ELSE accuracy_black END)
+              SUM(g.result = 'win') AS wins,
+              SUM(g.result = 'loss') AS losses,
+              SUM(g.result = 'draw') AS draws,
+              AVG(CASE WHEN g.analysis_status = 'analyzed'
+                       THEN (CASE WHEN g.user_color = 'white' THEN g.accuracy_white ELSE g.accuracy_black END)
                   END) AS avg_accuracy
-       FROM games
-       WHERE eco_code IS NOT NULL
-       GROUP BY eco_code, user_color
+       FROM games g
+       WHERE g.eco_code IS NOT NULL${f.cond}
+       GROUP BY g.eco_code, g.user_color
        HAVING COUNT(*) >= ?
        ORDER BY games DESC`
     )
-    .all(minGames) as {
+    .all(...f.params, minGames) as {
     eco: string
     name: string
     color: 'white' | 'black'
@@ -83,17 +98,18 @@ export function openingStats(minGames = 1): OpeningStat[] {
   }))
 }
 
-export function accuracyOverTime(): AccuracyPoint[] {
+export function accuracyOverTime(filter?: StatsFilter): AccuracyPoint[] {
+  const f = filterSql(filter)
   const rows = getDb()
     .prepare(
-      `SELECT end_time,
-              CASE WHEN user_color = 'white' THEN accuracy_white ELSE accuracy_black END AS accuracy,
-              time_class
-       FROM games
-       WHERE analysis_status = 'analyzed'
-       ORDER BY end_time ASC`
+      `SELECT g.end_time,
+              CASE WHEN g.user_color = 'white' THEN g.accuracy_white ELSE g.accuracy_black END AS accuracy,
+              g.time_class
+       FROM games g
+       WHERE g.analysis_status = 'analyzed'${f.cond}
+       ORDER BY g.end_time ASC`
     )
-    .all() as { end_time: number; accuracy: number | null; time_class: string | null }[]
+    .all(...f.params) as { end_time: number; accuracy: number | null; time_class: string | null }[]
   return rows
     .filter((r) => r.accuracy !== null)
     .map((r) => ({

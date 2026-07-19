@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import type {
   AccuracyPoint,
@@ -6,6 +6,7 @@ import type {
   ExtendedStats,
   OpeningStat,
   PlayerProfile,
+  StatsFilter,
   StyleReport,
   TimeControlStat
 } from '../../../shared/types'
@@ -33,16 +34,24 @@ export default function Insights(): React.JSX.Element {
   const [tcStats, setTcStats] = useState<TimeControlStat[]>([])
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // '' | 'class:blitz' | 'tc:300' — scopes the stats/charts below.
+  const [sel, setSel] = useState('')
 
-  const load = async (): Promise<void> => {
+  const filter: StatsFilter | undefined = sel.startsWith('tc:')
+    ? { timeControl: sel.slice(3) }
+    : sel.startsWith('class:')
+      ? { timeClass: sel.slice(6) }
+      : undefined
+
+  const load = useCallback(async (): Promise<void> => {
     const [p, r, o, a, t, c, x, tc] = await Promise.all([
       api.getProfile(),
       api.getStyleReport(),
-      api.openingStats(1),
-      api.accuracyOverTime(),
+      api.openingStats(1, filter),
+      api.accuracyOverTime(filter),
       api.mistakeTags(),
       api.costs(),
-      api.extendedStats(),
+      api.extendedStats(filter),
       api.timeControlStats().catch(() => [] as TimeControlStat[])
     ])
     setProfile(p?.profile ?? null)
@@ -53,11 +62,12 @@ export default function Insights(): React.JSX.Element {
     setCosts(c)
     setExt(x)
     setTcStats(tc)
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sel])
 
   useEffect(() => {
     void load()
-  }, [])
+  }, [load])
 
   const generate = async (): Promise<void> => {
     setGenerating(true)
@@ -76,7 +86,25 @@ export default function Insights(): React.JSX.Element {
 
   return (
     <div>
-      <h1>Insights</h1>
+      <div className="insights-head">
+        <h1>Insights</h1>
+        <select value={sel} onChange={(e) => setSel(e.target.value)}>
+          <option value="">All time controls</option>
+          <optgroup label="Category">
+            <option value="class:bullet">Bullet</option>
+            <option value="class:blitz">Blitz</option>
+            <option value="class:rapid">Rapid</option>
+            <option value="class:daily">Daily</option>
+          </optgroup>
+          <optgroup label="Exact time">
+            {tcStats.map((s) => (
+              <option key={s.timeControl} value={`tc:${s.timeControl}`}>
+                {fmtTimeControl(s.timeControl)} · {s.games} games
+              </option>
+            ))}
+          </optgroup>
+        </select>
+      </div>
       {ext && <StatTiles stats={ext} />}
       <div className="insights-grid" style={{ marginTop: 16 }}>
         {ext && (

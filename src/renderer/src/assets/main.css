@@ -559,6 +559,17 @@ progress {
 
 /* ---------- insights ---------- */
 
+.insights-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.insights-head h1 {
+  margin-bottom: 0;
+}
+
 .insights-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

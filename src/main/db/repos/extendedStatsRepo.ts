@@ -1,5 +1,21 @@
-import type { ExtendedStats, Phase } from '../../../shared/types'
+import type { ExtendedStats, Phase, StatsFilter } from '../../../shared/types'
 import { getDb } from '../database'
+
+/** WHERE-clause fragment (as `AND …`) + params for an optional games filter.
+    Every query below aliases the games table as `g`. */
+function filterSql(filter?: StatsFilter): { cond: string; params: unknown[] } {
+  const conds: string[] = []
+  const params: unknown[] = []
+  if (filter?.timeClass) {
+    conds.push('g.time_class = ?')
+    params.push(filter.timeClass)
+  }
+  if (filter?.timeControl) {
+    conds.push('g.time_control = ?')
+    params.push(filter.timeControl)
+  }
+  return { cond: conds.length ? ` AND ${conds.join(' AND ')}` : '', params }
+}
 
 // --- game phases -----------------------------------------------------------
 
@@ -26,14 +42,21 @@ export interface PhaseStat {
   blunderPct: number // blunders per 100 moves
 }
 
-export function phaseStats(): PhaseStat[] {
+export function phaseStats(filter?: StatsFilter): PhaseStat[] {
+  const f = filterSql(filter)
   const rows = getDb()
     .prepare(
       `SELECT m.ply, m.fen_before, m.move_accuracy, m.classification
-       FROM moves m WHERE m.is_user_move = 1 AND m.move_accuracy IS NOT NULL
-         AND m.classification != 'book'`
+       FROM moves m JOIN games g ON g.id = m.game_id
+       WHERE m.is_user_move = 1 AND m.move_accuracy IS NOT NULL
+         AND m.classification != 'book'${f.cond}`
     )
-    .all() as { ply: number; fen_before: string; move_accuracy: number; classification: string }[]
+    .all(...f.params) as {
+    ply: number
+    fen_before: string
+    move_accuracy: number
+    classification: string
+  }[]
 
   const acc: Record<Phase, { n: number; accSum: number; blunders: number }> = {
     opening: { n: 0, accSum: 0, blunders: 0 },
@@ -70,14 +93,16 @@ const CLOCK_BUCKETS: { label: string; min: number; max: number }[] = [
   { label: '< 10 s', min: 0, max: 10 }
 ]
 
-export function clockBuckets(): ClockBucket[] {
+export function clockBuckets(filter?: StatsFilter): ClockBucket[] {
+  const f = filterSql(filter)
   const rows = getDb()
     .prepare(
-      `SELECT clock_seconds AS clk, classification = 'blunder' AS isBlunder
-       FROM moves WHERE is_user_move = 1 AND clock_seconds IS NOT NULL
-         AND classification IS NOT NULL AND classification != 'book'`
+      `SELECT m.clock_seconds AS clk, m.classification = 'blunder' AS isBlunder
+       FROM moves m JOIN games g ON g.id = m.game_id
+       WHERE m.is_user_move = 1 AND m.clock_seconds IS NOT NULL
+         AND m.classification IS NOT NULL AND m.classification != 'book'${f.cond}`
     )
-    .all() as { clk: number; isBlunder: number }[]
+    .all(...f.params) as { clk: number; isBlunder: number }[]
   return CLOCK_BUCKETS.map((b) => {
     const inBucket = rows.filter((r) => r.clk >= b.min && r.clk < b.max)
     const blunders = inBucket.filter((r) => r.isBlunder).length
@@ -98,7 +123,8 @@ export interface Conversions {
   lostWhenLosing: number
 }
 
-export function conversions(): Conversions {
+export function conversions(filter?: StatsFilter): Conversions {
+  const f = filterSql(filter)
   const row = getDb()
     .prepare(
       `WITH per_game AS (
@@ -106,7 +132,7 @@ export function conversions(): Conversions {
                 MAX(m.win_prob_after) AS best,
                 MIN(m.win_prob_after) AS worst
          FROM games g JOIN moves m ON m.game_id = g.id AND m.is_user_move = 1
-         WHERE g.analysis_status = 'analyzed' AND m.win_prob_after IS NOT NULL
+         WHERE g.analysis_status = 'analyzed' AND m.win_prob_after IS NOT NULL${f.cond}
          GROUP BY g.id
        )
        SELECT
@@ -116,7 +142,7 @@ export function conversions(): Conversions {
          SUM(worst <= 20 AND result = 'loss') AS lostLosing
        FROM per_game`
     )
-    .get() as {
+    .get(...f.params) as {
     thrown: number | null
     held: number | null
     comebacks: number | null
@@ -145,14 +171,15 @@ const TERMINATION_LABELS: Record<string, string> = {
   abandoned: 'abandoned'
 }
 
-export function terminations(): TerminationRow[] {
+export function terminations(filter?: StatsFilter): TerminationRow[] {
+  const f = filterSql(filter)
   const rows = getDb()
     .prepare(
-      `SELECT result, termination, COUNT(*) AS games FROM games
-       WHERE result IN ('win','loss') AND termination IS NOT NULL
-       GROUP BY result, termination`
+      `SELECT g.result, g.termination, COUNT(*) AS games FROM games g
+       WHERE g.result IN ('win','loss') AND g.termination IS NOT NULL${f.cond}
+       GROUP BY g.result, g.termination`
     )
-    .all() as { result: 'win' | 'loss'; termination: string; games: number }[]
+    .all(...f.params) as { result: 'win' | 'loss'; termination: string; games: number }[]
   const merged = new Map<string, TerminationRow>()
   for (const r of rows) {
     const label = TERMINATION_LABELS[r.termination] ?? 'other'
@@ -172,15 +199,16 @@ export interface RatingPoint {
   timeClass: string
 }
 
-export function ratingHistory(): RatingPoint[] {
+export function ratingHistory(filter?: StatsFilter): RatingPoint[] {
+  const f = filterSql(filter)
   const rows = getDb()
     .prepare(
-      `SELECT end_time,
-              CASE WHEN user_color = 'white' THEN white_rating ELSE black_rating END AS rating,
-              time_class
-       FROM games WHERE time_class IS NOT NULL ORDER BY end_time ASC`
+      `SELECT g.end_time,
+              CASE WHEN g.user_color = 'white' THEN g.white_rating ELSE g.black_rating END AS rating,
+              g.time_class
+       FROM games g WHERE g.time_class IS NOT NULL${f.cond} ORDER BY g.end_time ASC`
     )
-    .all() as { end_time: number; rating: number | null; time_class: string }[]
+    .all(...f.params) as { end_time: number; rating: number | null; time_class: string }[]
   return rows
     .filter((r) => r.rating !== null)
     .map((r) => ({ endTime: r.end_time, rating: r.rating!, timeClass: r.time_class }))
@@ -195,18 +223,19 @@ export interface HourBucket {
   avgAccuracy: number | null
 }
 
-export function hourOfDay(): HourBucket[] {
+export function hourOfDay(filter?: StatsFilter): HourBucket[] {
+  const f = filterSql(filter)
   const rows = getDb()
     .prepare(
-      `SELECT CAST(strftime('%H', end_time, 'unixepoch', 'localtime') AS INTEGER) AS hour,
+      `SELECT CAST(strftime('%H', g.end_time, 'unixepoch', 'localtime') AS INTEGER) AS hour,
               COUNT(*) AS games,
-              AVG(result = 'win') * 100 AS winPct,
-              AVG(CASE WHEN analysis_status = 'analyzed'
-                       THEN (CASE WHEN user_color = 'white' THEN accuracy_white ELSE accuracy_black END)
+              AVG(g.result = 'win') * 100 AS winPct,
+              AVG(CASE WHEN g.analysis_status = 'analyzed'
+                       THEN (CASE WHEN g.user_color = 'white' THEN g.accuracy_white ELSE g.accuracy_black END)
                   END) AS avgAccuracy
-       FROM games GROUP BY hour`
+       FROM games g WHERE 1 = 1${f.cond} GROUP BY hour`
     )
-    .all() as { hour: number; games: number; winPct: number; avgAccuracy: number | null }[]
+    .all(...f.params) as { hour: number; games: number; winPct: number; avgAccuracy: number | null }[]
   const buckets = [
     { label: 'Night (0–6)', hours: [0, 1, 2, 3, 4, 5] },
     { label: 'Morning (6–12)', hours: [6, 7, 8, 9, 10, 11] },
@@ -237,14 +266,15 @@ export interface RecentForm {
   recentGames: number
 }
 
-export function recentForm(window = 30): RecentForm {
+export function recentForm(window = 30, filter?: StatsFilter): RecentForm {
+  const f = filterSql(filter)
   const rows = getDb()
     .prepare(
-      `SELECT CASE WHEN user_color = 'white' THEN accuracy_white ELSE accuracy_black END AS acc
-       FROM games WHERE analysis_status = 'analyzed'
-       ORDER BY end_time DESC LIMIT ?`
+      `SELECT CASE WHEN g.user_color = 'white' THEN g.accuracy_white ELSE g.accuracy_black END AS acc
+       FROM games g WHERE g.analysis_status = 'analyzed'${f.cond}
+       ORDER BY g.end_time DESC LIMIT ?`
     )
-    .all(window * 2) as { acc: number | null }[]
+    .all(...f.params, window * 2) as { acc: number | null }[]
   const accs = rows.map((r) => r.acc).filter((a): a is number => a !== null)
   const recent = accs.slice(0, window)
   const previous = accs.slice(window, window * 2)
@@ -259,14 +289,14 @@ export function recentForm(window = 30): RecentForm {
 
 // --- bundle -----------------------------------------------------------------
 
-export function extendedStats(): ExtendedStats {
+export function extendedStats(filter?: StatsFilter): ExtendedStats {
   return {
-    phases: phaseStats(),
-    clock: clockBuckets(),
-    conversions: conversions(),
-    terminations: terminations(),
-    ratingHistory: ratingHistory(),
-    hourOfDay: hourOfDay(),
-    recentForm: recentForm()
+    phases: phaseStats(filter),
+    clock: clockBuckets(filter),
+    conversions: conversions(filter),
+    terminations: terminations(filter),
+    ratingHistory: ratingHistory(filter),
+    hourOfDay: hourOfDay(filter),
+    recentForm: recentForm(30, filter)
   }
 }
