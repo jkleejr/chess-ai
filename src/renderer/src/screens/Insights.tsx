@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import type {
   AccuracyPoint,
   CostSummary,
+  ExtendedStats,
   OpeningStat,
   PlayerProfile,
   StyleReport
@@ -10,6 +11,14 @@ import type {
 import { api } from '../api'
 import AccuracyChart from '../components/AccuracyChart'
 import OpeningStats from '../components/OpeningStats'
+import {
+  ClockChart,
+  HourChart,
+  PhaseChart,
+  RatingChart,
+  StatTiles,
+  TerminationChart
+} from '../components/PerformanceCharts'
 
 export default function Insights(): React.JSX.Element {
   const [profile, setProfile] = useState<PlayerProfile | null>(null)
@@ -18,17 +27,19 @@ export default function Insights(): React.JSX.Element {
   const [accuracy, setAccuracy] = useState<AccuracyPoint[]>([])
   const [tags, setTags] = useState<{ tag: string; count: number }[]>([])
   const [costs, setCosts] = useState<CostSummary | null>(null)
+  const [ext, setExt] = useState<ExtendedStats | null>(null)
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const load = async (): Promise<void> => {
-    const [p, r, o, a, t, c] = await Promise.all([
+    const [p, r, o, a, t, c, x] = await Promise.all([
       api.getProfile(),
       api.getStyleReport(),
       api.openingStats(1),
       api.accuracyOverTime(),
       api.mistakeTags(),
-      api.costs()
+      api.costs(),
+      api.extendedStats()
     ])
     setProfile(p?.profile ?? null)
     setReport(r)
@@ -36,6 +47,7 @@ export default function Insights(): React.JSX.Element {
     setAccuracy(a)
     setTags(t)
     setCosts(c)
+    setExt(x)
   }
 
   useEffect(() => {
@@ -60,7 +72,34 @@ export default function Insights(): React.JSX.Element {
   return (
     <div>
       <h1>Insights</h1>
-      <div className="insights-grid">
+      {ext && <StatTiles stats={ext} />}
+      <div className="insights-grid" style={{ marginTop: 16 }}>
+        {ext && (
+          <>
+            <div className="card full">
+              <h2>Rating over time</h2>
+              <RatingChart stats={ext} />
+            </div>
+            <div className="card">
+              <h2>Accuracy by game phase</h2>
+              <PhaseChart stats={ext} />
+              <p className="faint">Where in the game your play weakens.</p>
+            </div>
+            <div className="card">
+              <h2>Blunder rate vs. time left</h2>
+              <ClockChart stats={ext} />
+              <p className="faint">How much the clock hurts your decisions.</p>
+            </div>
+            <div className="card">
+              <h2>How your games end</h2>
+              <TerminationChart stats={ext} />
+            </div>
+            <div className="card">
+              <h2>Win rate by time of day</h2>
+              <HourChart stats={ext} />
+            </div>
+          </>
+        )}
         <div className="card full">
           <h2>Your style</h2>
           {profile ? (

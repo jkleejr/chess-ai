@@ -25,6 +25,7 @@ export const IPC = {
   statsOpenings: 'stats:openings',
   statsAccuracy: 'stats:accuracy',
   statsMistakeTags: 'stats:mistakeTags',
+  statsExtended: 'stats:extended',
   styleReportGet: 'styleReport:get',
 
   // push events (webContents.send)

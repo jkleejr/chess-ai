@@ -1,6 +1,7 @@
 // Typed facade over the preload bridge.
 import type {
   AccuracyPoint,
+  ExtendedStats,
   AnalysisStatusInfo,
   CostSummary,
   EngineStatus,
@@ -60,7 +61,8 @@ export const api = {
   getStyleReport: () => invoke('styleReport:get') as Promise<StyleReport | null>,
   openingStats: (minGames?: number) => invoke('stats:openings', minGames) as Promise<OpeningStat[]>,
   accuracyOverTime: () => invoke('stats:accuracy') as Promise<AccuracyPoint[]>,
-  mistakeTags: () => invoke('stats:mistakeTags') as Promise<{ tag: string; count: number }[]>
+  mistakeTags: () => invoke('stats:mistakeTags') as Promise<{ tag: string; count: number }[]>,
+  extendedStats: () => invoke('stats:extended') as Promise<ExtendedStats>
 }
 
 export const events = {

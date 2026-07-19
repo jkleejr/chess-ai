@@ -164,3 +164,26 @@ export interface AccuracyPoint {
   accuracy: number
   timeClass: string
 }
+
+// --- extended insights ---
+
+export type Phase = 'opening' | 'middlegame' | 'endgame'
+
+export interface ExtendedStats {
+  phases: { phase: Phase; moves: number; avgAccuracy: number; blunderPct: number }[]
+  clock: { label: string; moves: number; blunderPct: number }[]
+  conversions: {
+    thrownWins: number
+    wonWhenWinning: number
+    comebacks: number
+    lostWhenLosing: number
+  }
+  terminations: { result: 'win' | 'loss'; termination: string; games: number }[]
+  ratingHistory: { endTime: number; rating: number; timeClass: string }[]
+  hourOfDay: { label: string; games: number; winPct: number; avgAccuracy: number | null }[]
+  recentForm: {
+    recentAvgAccuracy: number | null
+    previousAvgAccuracy: number | null
+    recentGames: number
+  }
+}

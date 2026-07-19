@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect x="8" y="8" width="1008" height="1008" rx="230" fill="#ffffff"/>
+  <g transform="translate(122, 92) scale(8)">
+<path fill="#111111" d="
+M 26 88
+L 80 88
+L 80 79
+L 71 72
+C 76 58 75 42 66 30
+C 60 22 51 17 43 15
+L 41 6
+L 33 13
+L 18 34
+C 17 36 17 38 19 40
+L 27 47
+C 29 49 32 49 34 47
+L 41 42
+C 37 54 29 62 26 74
+Z" stroke-linejoin="round" stroke="#111111" stroke-width="3"/>
+<circle cx="38" cy="27" r="3.2" fill="#ffffff"/>
+<rect x="22" y="92" width="62" height="6" rx="3" fill="#111111"/></g>
+</svg>

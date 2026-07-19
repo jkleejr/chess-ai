@@ -11,3 +11,5 @@ out
 .env
 .env.*
 *.sqlite
+build/logo-candidates/icon.iconset
+build/logo-candidates/*.png

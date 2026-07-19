@@ -26,7 +26,8 @@ const INVOKE_CHANNELS = [
   'styleReport:get',
   'stats:openings',
   'stats:accuracy',
-  'stats:mistakeTags'
+  'stats:mistakeTags',
+  'stats:extended'
 ] as const
 
 const EVENT_CHANNELS = [
