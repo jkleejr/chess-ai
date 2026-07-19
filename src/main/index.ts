@@ -16,7 +16,7 @@ function createWindow(): BrowserWindow {
     show: false,
     autoHideMenuBar: true,
     titleBarStyle: 'hiddenInset',
-    backgroundColor: '#000000',
+    backgroundColor: '#131313',
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),

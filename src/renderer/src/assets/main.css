@@ -5,22 +5,22 @@
   margin: 0;
 }
 
-/* NOIR theme: true black, white type, hairline rules. Color appears only as
-   data ink — red for damage, green for good, chart series. */
+/* MINIMAL DARK theme: soft near-black, gently raised rounded cards,
+   normal-case type. One teal accent; red/green appear only as data meaning. */
 :root {
-  --bg: #000000;
-  --bg-raised: #000000;
-  --bg-hover: #161616;
-  --border: #222222;
-  --text: #ffffff;
-  --text-dim: #9a9a9a;
-  --text-faint: #555555;
-  --accent: #ff2b2b; /* alarm red — the one accent */
-  --accent-hover: #ff5c5c;
+  --bg: #131313;
+  --bg-raised: #1c1c1c;
+  --bg-hover: #262626;
+  --border: #2a2a2a;
+  --text: #f2f2f2;
+  --text-dim: #9c9c9c;
+  --text-faint: #6a6a6a;
+  --accent: #35b8a5;
+  --accent-hover: #4ccdba;
   --blue: #3987e5;
-  --win: #2fae2f;
-  --loss: #ff4b4b;
-  --draw: #9a9a9a;
+  --win: #55b455;
+  --loss: #f06a5d;
+  --draw: #9c9c9c;
   --brilliant: #26c2a3;
   --best: #81b64c;
   --excellent: #81b64c;
@@ -28,7 +28,7 @@
   --book: #a88865;
   --inaccuracy: #f0c15c;
   --mistake: #e58f2a;
-  --blunder: #ff4b4b;
+  --blunder: #f06a5d;
   font-size: 14px;
 }
 
@@ -40,7 +40,7 @@ body,
 
 body {
   font-family:
-    'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', Roboto, sans-serif;
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -60,10 +60,9 @@ body {
 }
 
 .sidebar {
-  width: 200px;
+  width: 195px;
   flex-shrink: 0;
   background: var(--bg);
-  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   padding-top: 48px; /* traffic-light inset */
@@ -74,57 +73,57 @@ body {
   -webkit-app-region: no-drag;
   display: flex;
   flex-direction: column;
-  padding: 8px 0;
+  gap: 2px;
+  padding: 0 10px;
 }
 
 .sidebar .brand {
-  padding: 0 20px 26px;
-  font-weight: 900;
+  padding: 0 22px 26px;
+  font-weight: 700;
   font-size: 15px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
 }
 
 .sidebar .brand .knight {
-  font-size: 20px;
-  margin-right: 5px;
-  vertical-align: -2px;
+  font-size: 18px;
+  margin-right: 6px;
+  vertical-align: -1px;
 }
 
 .nav-link {
-  display: flex;
-  align-items: center;
-  padding: 12px 20px;
-  color: var(--text-faint);
+  display: block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--text-dim);
   text-decoration: none;
-  font-weight: 800;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+  font-weight: 500;
+  font-size: 14px;
 }
 
 .nav-link:hover {
-  color: var(--text-dim);
+  color: var(--text);
 }
 
 .nav-link.active {
   color: var(--text);
+  background: var(--bg-raised);
 }
 
 .nav-link.active::before {
-  content: '■';
-  color: var(--accent);
-  font-size: 7px;
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
   margin-right: 9px;
   vertical-align: 2px;
 }
 
 .sidebar .status-area {
   margin-top: auto;
-  padding: 14px 20px;
-  font-size: 11px;
+  padding: 14px 22px;
+  font-size: 11.5px;
   color: var(--text-faint);
-  border-top: 1px solid var(--border);
   -webkit-app-region: no-drag;
   display: flex;
   flex-direction: column;
@@ -145,26 +144,22 @@ body {
 /* ---------- generic ---------- */
 
 h1 {
-  font-size: 38px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -0.5px;
-  line-height: 1;
-  margin-bottom: 22px;
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  margin-bottom: 20px;
 }
 
 h2 {
-  font-size: 13px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 2.5px;
-  margin-bottom: 14px;
+  font-size: 14.5px;
+  font-weight: 600;
+  margin-bottom: 12px;
 }
 
 .card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 0;
+  background: var(--bg-raised);
+  border: none;
+  border-radius: 12px;
   padding: 20px;
 }
 
@@ -180,67 +175,56 @@ h2 {
 button,
 .btn {
   font: inherit;
-  background: var(--bg);
+  background: var(--bg-raised);
   color: var(--text);
-  border: 1px solid var(--text);
-  border-radius: 0;
-  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 14px;
   cursor: pointer;
-  font-weight: 800;
-  font-size: 11.5px;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
+  font-weight: 500;
 }
 
 button:hover:not(:disabled) {
-  background: var(--text);
-  color: var(--bg);
+  background: var(--bg-hover);
 }
 
 button:disabled {
-  opacity: 0.35;
+  opacity: 0.45;
   cursor: default;
-  border-color: var(--text-faint);
 }
 
 button.primary {
-  background: var(--text);
-  border-color: var(--text);
-  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0b2622;
+  font-weight: 600;
 }
 
 button.primary:hover:not(:disabled) {
-  background: var(--text-dim);
-  border-color: var(--text-dim);
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 button.small {
   padding: 4px 10px;
-  font-size: 10.5px;
+  font-size: 12.5px;
 }
 
 input,
 select {
   font: inherit;
-  background: var(--bg);
+  background: var(--bg-raised);
   color: var(--text);
-  border: 1px solid #333333;
-  border-radius: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
   padding: 8px 12px;
   outline: none;
   user-select: text;
 }
 
-select {
-  text-transform: uppercase;
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-}
-
 input:focus,
 select:focus {
-  border-color: var(--text);
+  border-color: var(--accent);
 }
 
 .error-text {
@@ -254,14 +238,14 @@ select:focus {
 }
 
 progress {
-  accent-color: var(--text);
+  accent-color: var(--accent);
   width: 100%;
 }
 
 .spinner {
   display: inline-block;
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   border: 2px solid var(--border);
   border-top-color: var(--accent);
   border-radius: 50%;
@@ -285,20 +269,18 @@ progress {
 }
 
 .onboarding .card {
-  width: 460px;
-  padding: 36px;
-  border-color: #333333;
+  width: 450px;
+  padding: 32px;
 }
 
 .onboarding h1 {
-  font-size: 28px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .onboarding form {
   display: flex;
   gap: 8px;
-  margin-top: 20px;
+  margin-top: 18px;
 }
 
 .onboarding input {
@@ -317,30 +299,28 @@ progress {
 .filters {
   display: flex;
   gap: 8px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .game-table {
   width: 100%;
   border-collapse: collapse;
-  border-top: 1px solid var(--text);
 }
 
 .game-table th {
   text-align: left;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  font-weight: 800;
-  color: var(--text-dim);
-  padding: 10px 10px 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-faint);
+  padding: 6px 10px;
   border-bottom: 1px solid var(--border);
 }
 
 .game-table td {
-  padding: 10px;
-  border-bottom: 1px solid var(--border);
+  padding: 9px 10px;
+  border-bottom: 1px solid #202020;
   font-size: 13.5px;
 }
 
@@ -349,7 +329,7 @@ progress {
 }
 
 .game-table tbody tr:hover {
-  background: var(--bg-hover);
+  background: var(--bg-raised);
 }
 
 .result-chip {
@@ -357,31 +337,28 @@ progress {
   min-width: 22px;
   text-align: center;
   padding: 1px 7px;
-  border-radius: 0;
-  font-weight: 800;
-  font-size: 11.5px;
-  font-family: 'SF Mono', Menlo, monospace;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
 }
 
 .result-win {
-  border: 1px solid var(--win);
+  background: rgba(85, 180, 85, 0.14);
   color: var(--win);
 }
 
 .result-loss {
-  border: 1px solid var(--loss);
+  background: rgba(240, 106, 93, 0.13);
   color: var(--loss);
 }
 
 .result-draw {
-  border: 1px solid var(--text-faint);
+  background: rgba(156, 156, 156, 0.13);
   color: var(--draw);
 }
 
 .acc {
   font-variant-numeric: tabular-nums;
-  font-family: 'SF Mono', Menlo, monospace;
-  font-size: 12.5px;
 }
 
 /* ---------- game review ---------- */
@@ -401,15 +378,17 @@ progress {
   flex-shrink: 0;
 }
 
+/* Board is sized by BOTH window height and remaining width, so the review
+   screen fits at any window size (window min is 980×640). */
 .board-wrap {
-  width: min(calc(100vh - 150px), 620px);
+  width: clamp(300px, min(calc(100vh - 150px), calc(100vw - 640px)), 620px);
 }
 
 .board-under {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 12px;
+  margin-top: 10px;
   gap: 8px;
 }
 
@@ -419,14 +398,14 @@ progress {
 }
 
 .nav-buttons button {
-  padding: 5px 12px;
-  font-size: 14px;
+  padding: 6px 12px;
+  font-size: 15px;
 }
 
 .side-column {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   flex: 1;
   min-width: 300px;
   overflow: hidden;
@@ -434,17 +413,16 @@ progress {
 
 .eval-bar {
   width: 20px;
-  border-radius: 0;
+  border-radius: 6px;
   overflow: hidden;
-  background: #2b2b2b;
+  background: #333333;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  border: 1px solid #333333;
 }
 
 .eval-bar .white-part {
-  background: #ffffff;
+  background: #ececec;
   transition: height 0.25s ease;
 }
 
@@ -452,9 +430,8 @@ progress {
   flex: 1;
   min-height: 100px;
   overflow-y: auto;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 0;
+  background: var(--bg-raised);
+  border-radius: 12px;
   padding: 8px;
 }
 
@@ -474,7 +451,7 @@ progress {
 
 .move-cell {
   padding: 0 6px;
-  border-radius: 0;
+  border-radius: 6px;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -484,12 +461,8 @@ progress {
 }
 
 .move-cell.current {
-  background: var(--text);
-  color: var(--bg);
-}
-
-.move-cell.current .glyph {
-  color: var(--bg);
+  background: var(--bg-hover);
+  outline: 1px solid var(--accent);
 }
 
 .glyph {
@@ -499,9 +472,8 @@ progress {
 }
 
 .coach-panel {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 0;
+  background: var(--bg-raised);
+  border-radius: 12px;
   padding: 16px;
   overflow-y: auto;
   max-height: 46vh;
@@ -510,31 +482,27 @@ progress {
 }
 
 .coach-panel h3 {
-  font-size: 11px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--text-dim);
-  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-faint);
+  margin-bottom: 8px;
 }
 
 .coach-panel p {
   margin-bottom: 8px;
   line-height: 1.6;
   font-size: 13.5px;
-  color: #d6d6d6;
+  color: #d2d2d2;
 }
 
 .concept-chip {
   display: inline-block;
-  background: var(--text);
-  color: var(--bg);
-  border-radius: 0;
-  padding: 2px 8px;
-  font-size: 10.5px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  background: rgba(53, 184, 165, 0.14);
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 1px 8px;
+  font-size: 12px;
+  font-weight: 600;
   margin: 0 6px 8px 0;
 }
 
@@ -546,18 +514,15 @@ progress {
 }
 
 .review-header .title {
-  font-weight: 800;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-weight: 600;
+  font-size: 14.5px;
 }
 
 .accuracy-badges {
   display: flex;
   gap: 10px;
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--text-dim);
-  font-family: 'SF Mono', Menlo, monospace;
 }
 
 /* ---------- insights ---------- */
@@ -565,11 +530,17 @@ progress {
 .insights-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 12px;
 }
 
 .insights-grid .full {
   grid-column: 1 / -1;
+}
+
+@media (max-width: 1180px) {
+  .insights-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .stat-table {
@@ -581,16 +552,14 @@ progress {
 .stat-table th,
 .stat-table td {
   text-align: left;
-  padding: 6px 8px;
-  border-bottom: 1px solid var(--border);
+  padding: 5px 8px;
+  border-bottom: 1px solid #262626;
 }
 
 .stat-table th {
-  color: var(--text-dim);
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
+  color: var(--text-faint);
+  font-size: 11.5px;
+  font-weight: 600;
 }
 
 .tag-cloud {
@@ -600,45 +569,35 @@ progress {
 }
 
 .tag {
-  background: var(--bg);
-  border: 1px solid #333333;
-  border-radius: 0;
+  background: var(--bg-hover);
+  border-radius: 999px;
   padding: 3px 11px;
-  font-size: 12px;
+  font-size: 12.5px;
 }
 
 .tag b {
-  color: var(--text);
-  font-family: 'SF Mono', Menlo, monospace;
+  color: var(--accent);
 }
 
 .markdown {
   line-height: 1.65;
   user-select: text;
-  color: #d6d6d6;
+  color: #d2d2d2;
 }
 
 .markdown h1,
 .markdown h2,
 .markdown h3 {
-  margin: 16px 0 8px;
+  margin: 14px 0 8px;
   color: var(--text);
 }
 
 .markdown h1 {
-  font-size: 20px;
-  letter-spacing: 0;
+  font-size: 19px;
 }
 
 .markdown h2 {
-  font-size: 13px;
-}
-
-.markdown h3 {
-  font-size: 13px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: 15px;
 }
 
 .markdown ul,
@@ -661,20 +620,18 @@ progress {
   max-width: 560px;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 20px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
 }
 
 .field label {
-  font-weight: 800;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
+  font-weight: 600;
+  font-size: 13px;
   color: var(--text-dim);
 }
 
@@ -691,41 +648,27 @@ progress {
 
 .tile-row {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 12px;
 }
 
 .stat-tile {
-  background: var(--bg);
-  border: none;
-  border-right: 1px solid var(--border);
-  border-radius: 0;
-  padding: 20px 18px;
-}
-
-.stat-tile:last-child {
-  border-right: none;
+  background: var(--bg-raised);
+  border-radius: 12px;
+  padding: 16px 18px;
 }
 
 .tile-label {
-  display: inline-block;
-  background: var(--text);
-  color: var(--bg);
-  font-size: 9px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  padding: 3px 7px;
-  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
 }
 
 .tile-value {
-  font-size: 38px;
-  font-weight: 900;
-  letter-spacing: -1.5px;
-  line-height: 1;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
@@ -734,11 +677,11 @@ progress {
 }
 
 .tile-bad {
-  color: var(--accent);
+  color: var(--loss);
 }
 
 .tile-sub {
-  font-size: 11px;
+  font-size: 11.5px;
   color: var(--text-faint);
-  margin-top: 10px;
+  margin-top: 5px;
 }

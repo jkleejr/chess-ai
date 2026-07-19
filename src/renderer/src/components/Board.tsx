@@ -40,9 +40,9 @@ export default function Board({
           arrows,
           squareStyles,
           animationDurationInMs: 150,
-          darkSquareStyle: { backgroundColor: '#767676' },
-          lightSquareStyle: { backgroundColor: '#ececec' },
-          boardStyle: { overflow: 'hidden' }
+          darkSquareStyle: { backgroundColor: '#6f7276' },
+          lightSquareStyle: { backgroundColor: '#e9e9e7' },
+          boardStyle: { borderRadius: '10px', overflow: 'hidden' }
         }}
       />
     </div>

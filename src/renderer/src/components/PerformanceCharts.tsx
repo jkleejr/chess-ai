@@ -20,13 +20,13 @@ const TIME_CLASS_COLORS: Record<string, string> = {
   bullet: '#d55181',
   daily: '#c98500'
 }
-const STATUS_SERIOUS = '#ff4b4b' // blunder metrics: the series MEANS bad
-const SINGLE_HUE = '#ffffff' // magnitude charts: white bars on black
+const STATUS_SERIOUS = '#f06a5d' // blunder metrics: the series MEANS bad
+const SINGLE_HUE = '#35b8a5' // magnitude charts: the teal accent
 
 const TOOLTIP_STYLE = {
-  background: '#0d0d0d',
-  border: '1px solid #333333',
-  borderRadius: 0,
+  background: 'var(--bg-hover)',
+  border: '1px solid var(--border)',
+  borderRadius: 8,
   fontSize: 12
 } as const
 
