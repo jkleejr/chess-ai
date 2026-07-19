@@ -103,6 +103,10 @@ export function listGames(offset: number, limit: number, filter?: GameListFilter
     where.push('g.time_class = @timeClass')
     params.timeClass = filter.timeClass
   }
+  if (filter?.timeControl) {
+    where.push('g.time_control = @timeControl')
+    params.timeControl = filter.timeControl
+  }
   if (filter?.eco) {
     where.push('g.eco_code = @eco')
     params.eco = filter.eco

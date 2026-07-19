@@ -12,6 +12,7 @@ import type {
   MoveExplanation,
   OpeningStat,
   PlayerProfile,
+  TimeControlStat,
   StyleReport,
   SyncProgress
 } from '../../shared/types'
@@ -62,7 +63,8 @@ export const api = {
   openingStats: (minGames?: number) => invoke('stats:openings', minGames) as Promise<OpeningStat[]>,
   accuracyOverTime: () => invoke('stats:accuracy') as Promise<AccuracyPoint[]>,
   mistakeTags: () => invoke('stats:mistakeTags') as Promise<{ tag: string; count: number }[]>,
-  extendedStats: () => invoke('stats:extended') as Promise<ExtendedStats>
+  extendedStats: () => invoke('stats:extended') as Promise<ExtendedStats>,
+  timeControlStats: () => invoke('stats:timeControls') as Promise<TimeControlStat[]>
 }
 
 export const events = {

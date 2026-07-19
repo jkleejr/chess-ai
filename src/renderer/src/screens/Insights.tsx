@@ -6,11 +6,13 @@ import type {
   ExtendedStats,
   OpeningStat,
   PlayerProfile,
-  StyleReport
+  StyleReport,
+  TimeControlStat
 } from '../../../shared/types'
 import { api } from '../api'
 import AccuracyChart from '../components/AccuracyChart'
 import OpeningStats from '../components/OpeningStats'
+import { fmtTimeControl } from './GameList'
 import {
   ClockChart,
   HourChart,
@@ -28,18 +30,20 @@ export default function Insights(): React.JSX.Element {
   const [tags, setTags] = useState<{ tag: string; count: number }[]>([])
   const [costs, setCosts] = useState<CostSummary | null>(null)
   const [ext, setExt] = useState<ExtendedStats | null>(null)
+  const [tcStats, setTcStats] = useState<TimeControlStat[]>([])
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const load = async (): Promise<void> => {
-    const [p, r, o, a, t, c, x] = await Promise.all([
+    const [p, r, o, a, t, c, x, tc] = await Promise.all([
       api.getProfile(),
       api.getStyleReport(),
       api.openingStats(1),
       api.accuracyOverTime(),
       api.mistakeTags(),
       api.costs(),
-      api.extendedStats()
+      api.extendedStats(),
+      api.timeControlStats().catch(() => [] as TimeControlStat[])
     ])
     setProfile(p?.profile ?? null)
     setReport(r)
@@ -48,6 +52,7 @@ export default function Insights(): React.JSX.Element {
     setTags(t)
     setCosts(c)
     setExt(x)
+    setTcStats(tc)
   }
 
   useEffect(() => {
@@ -99,6 +104,57 @@ export default function Insights(): React.JSX.Element {
               <HourChart stats={ext} />
             </div>
           </>
+        )}
+
+        {tcStats.length > 0 && (
+          <div className="card full">
+            <h2>By time control</h2>
+            <table className="stat-table">
+              <thead>
+                <tr>
+                  <th>Time control</th>
+                  <th>Games</th>
+                  <th>Record</th>
+                  <th>Win rate</th>
+                  <th>Avg accuracy</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tcStats
+                  .filter((s) => s.games >= 5)
+                  .map((s) => {
+                    const winPct = (s.wins / s.games) * 100
+                    return (
+                      <tr key={s.timeControl}>
+                        <td>
+                          {fmtTimeControl(s.timeControl)}{' '}
+                          <span className="faint">{s.timeClass ?? ''}</span>
+                        </td>
+                        <td>{s.games}</td>
+                        <td className="acc">
+                          {s.wins}W–{s.losses}L–{s.draws}D
+                        </td>
+                        <td
+                          style={{
+                            color:
+                              winPct >= 52
+                                ? 'var(--win)'
+                                : winPct <= 48
+                                  ? 'var(--loss)'
+                                  : undefined
+                          }}
+                        >
+                          {winPct.toFixed(0)}%
+                        </td>
+                        <td className="acc">
+                          {s.avgAccuracy !== null ? `${s.avgAccuracy.toFixed(1)}%` : '—'}
+                        </td>
+                      </tr>
+                    )
+                  })}
+              </tbody>
+            </table>
+          </div>
         )}
         <div className="card full">
           <h2>Your style</h2>

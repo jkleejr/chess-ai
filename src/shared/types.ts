@@ -145,7 +145,20 @@ export interface CostSummary {
 export interface GameListFilter {
   result?: GameResult
   timeClass?: string
+  timeControl?: string
   eco?: string
+}
+
+/** Per-exact-time-control aggregates (e.g. "300", "180+2", "60"). */
+export interface TimeControlStat {
+  timeControl: string
+  timeClass: string | null
+  games: number
+  wins: number
+  losses: number
+  draws: number
+  analyzed: number
+  avgAccuracy: number | null
 }
 
 export interface OpeningStat {

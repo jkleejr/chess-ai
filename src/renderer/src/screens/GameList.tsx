@@ -1,10 +1,66 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import type { GameListFilter, GameSummary } from '../../../shared/types'
+import type { GameListFilter, GameSummary, TimeControlStat } from '../../../shared/types'
 import { api, events } from '../api'
 import { useAppStore } from '../stores/appStore'
 
 const PAGE = 100
+
+/** "300" → "5 min", "180+2" → "3 min + 2s", "60" → "1 min", "1/86400" → "Daily". */
+export function fmtTimeControl(tc: string): string {
+  if (tc.includes('/')) return 'Daily'
+  const [baseStr, incStr] = tc.split('+')
+  const base = Number(baseStr)
+  const inc = Number(incStr ?? 0)
+  if (!Number.isFinite(base) || base <= 0) return tc
+  const min = base / 60
+  const label = min >= 1 ? `${Number.isInteger(min) ? min : min.toFixed(1)} min` : `${base} sec`
+  return inc > 0 ? `${label} + ${inc}s` : label
+}
+
+const TIME_CLASS_LABELS: Record<string, string> = {
+  bullet: 'Bullet',
+  blitz: 'Blitz',
+  rapid: 'Rapid',
+  daily: 'Daily'
+}
+
+interface StripStats {
+  games: number
+  wins: number
+  losses: number
+  draws: number
+  analyzed: number
+  avgAccuracy: number | null
+}
+
+/** Aggregate the per-time-control rows matching the current filter selection. */
+function stripFor(stats: TimeControlStat[], filter: GameListFilter): StripStats {
+  const rows = filter.timeControl
+    ? stats.filter((s) => s.timeControl === filter.timeControl)
+    : filter.timeClass
+      ? stats.filter((s) => s.timeClass === filter.timeClass)
+      : stats
+  const sum = rows.reduce(
+    (a, r) => ({
+      games: a.games + r.games,
+      wins: a.wins + r.wins,
+      losses: a.losses + r.losses,
+      draws: a.draws + r.draws,
+      analyzed: a.analyzed + r.analyzed,
+      accWeighted: a.accWeighted + (r.avgAccuracy ?? 0) * r.analyzed
+    }),
+    { games: 0, wins: 0, losses: 0, draws: 0, analyzed: 0, accWeighted: 0 }
+  )
+  return {
+    games: sum.games,
+    wins: sum.wins,
+    losses: sum.losses,
+    draws: sum.draws,
+    analyzed: sum.analyzed,
+    avgAccuracy: sum.analyzed > 0 ? sum.accWeighted / sum.analyzed : null
+  }
+}
 
 function fmtDate(unix: number): string {
   return new Date(unix * 1000).toLocaleDateString(undefined, {
@@ -33,19 +89,22 @@ export default function GameList(): React.JSX.Element {
   const [pendingTotal, setPendingTotal] = useState(0)
   const [paused, setPaused] = useState(false)
   const [queueActive, setQueueActive] = useState(false)
+  const [tcStats, setTcStats] = useState<TimeControlStat[]>([])
   const { startSync, syncProgress } = useAppStore()
 
   const load = useCallback(async () => {
-    const [rows, count, status] = await Promise.all([
+    const [rows, count, status, tcs] = await Promise.all([
       api.listGames(0, limit, filter),
       api.countGames(),
-      api.analysisStatus()
+      api.analysisStatus(),
+      api.timeControlStats().catch(() => [] as TimeControlStat[])
     ])
     setGames(rows)
     setTotal(count)
     setPendingTotal(status.pendingTotal)
     setPaused(status.paused)
     setQueueActive(status.queued > 0 || status.currentGameId !== null)
+    setTcStats(tcs)
   }, [filter, limit])
 
   useEffect(() => {
@@ -81,14 +140,33 @@ export default function GameList(): React.JSX.Element {
           <option value="draw">Draws</option>
         </select>
         <select
-          value={filter.timeClass ?? ''}
-          onChange={(e) => setFilter((f) => ({ ...f, timeClass: e.target.value || undefined }))}
+          value={
+            filter.timeControl ? `tc:${filter.timeControl}` : filter.timeClass ? `class:${filter.timeClass}` : ''
+          }
+          onChange={(e) => {
+            const v = e.target.value
+            setFilter((f) => ({
+              ...f,
+              timeClass: v.startsWith('class:') ? v.slice(6) : undefined,
+              timeControl: v.startsWith('tc:') ? v.slice(3) : undefined
+            }))
+          }}
         >
           <option value="">All time controls</option>
-          <option value="bullet">Bullet</option>
-          <option value="blitz">Blitz</option>
-          <option value="rapid">Rapid</option>
-          <option value="daily">Daily</option>
+          <optgroup label="Category">
+            {['bullet', 'blitz', 'rapid', 'daily'].map((c) => (
+              <option key={c} value={`class:${c}`}>
+                {TIME_CLASS_LABELS[c]}
+              </option>
+            ))}
+          </optgroup>
+          <optgroup label="Exact time">
+            {tcStats.map((s) => (
+              <option key={s.timeControl} value={`tc:${s.timeControl}`}>
+                {fmtTimeControl(s.timeControl)} · {s.games} games
+              </option>
+            ))}
+          </optgroup>
         </select>
         <button onClick={() => void startSync()} disabled={syncing}>
           {syncing ? 'Syncing…' : '↻ Sync new games'}
@@ -115,6 +193,38 @@ export default function GameList(): React.JSX.Element {
           {total} games{syncProgress?.phase === 'error' ? ` — ${syncProgress.message}` : ''}
         </span>
       </div>
+
+      {(() => {
+        const s = stripFor(tcStats, filter)
+        if (s.games === 0) return null
+        const winPct = (s.wins / s.games) * 100
+        const label = filter.timeControl
+          ? fmtTimeControl(filter.timeControl)
+          : filter.timeClass
+            ? TIME_CLASS_LABELS[filter.timeClass] ?? filter.timeClass
+            : 'All games'
+        return (
+          <div className="tc-strip">
+            <span>
+              <b>{label}</b>
+            </span>
+            <span>
+              {s.games} games · <b>{s.wins}W</b>–<b>{s.losses}L</b>–<b>{s.draws}D</b>
+            </span>
+            <span>
+              Win rate{' '}
+              <b className={winPct >= 50 ? 'ok-text' : 'error-text'}>{winPct.toFixed(0)}%</b>
+            </span>
+            <span>
+              Avg accuracy{' '}
+              <b>{s.avgAccuracy !== null ? `${s.avgAccuracy.toFixed(1)}%` : '—'}</b>
+              {s.analyzed > 0 && s.analyzed < s.games && (
+                <span className="faint"> ({s.analyzed} analyzed)</span>
+              )}
+            </span>
+          </div>
+        )
+      })()}
 
       <table className="game-table">
         <thead>

@@ -29,7 +29,7 @@ import {
   SETTING_KEYS
 } from '../db/repos/settingsRepo'
 import { extendedStats } from '../db/repos/extendedStatsRepo'
-import { accuracyOverTime, openingStats } from '../db/repos/statsRepo'
+import { accuracyOverTime, openingStats, timeControlStats } from '../db/repos/statsRepo'
 import { analysisQueue } from '../engine/analysisQueue'
 import { downloadStockfish, locateStockfish } from '../engine/stockfishProvision'
 import { IPC } from './channels'
@@ -166,6 +166,7 @@ export function registerIpcHandlers(win: BrowserWindow): void {
   ipcMain.handle(IPC.styleReportGet, () => getLatestStyleReport())
   ipcMain.handle(IPC.statsOpenings, (_e, minGames?: number) => openingStats(minGames ?? 1))
   ipcMain.handle(IPC.statsAccuracy, () => accuracyOverTime())
+  ipcMain.handle(IPC.statsTimeControls, () => timeControlStats())
   ipcMain.handle(IPC.statsMistakeTags, () => mistakeTagCounts())
   ipcMain.handle(IPC.statsExtended, () => extendedStats())
 }

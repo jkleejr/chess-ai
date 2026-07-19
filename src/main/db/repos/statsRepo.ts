@@ -1,5 +1,46 @@
-import type { AccuracyPoint, OpeningStat } from '../../../shared/types'
+import type { AccuracyPoint, OpeningStat, TimeControlStat } from '../../../shared/types'
 import { getDb } from '../database'
+
+/** Win rate / accuracy per exact time control ("300", "180+2", …), most-played first. */
+export function timeControlStats(): TimeControlStat[] {
+  const rows = getDb()
+    .prepare(
+      `SELECT time_control AS timeControl,
+              MAX(time_class) AS timeClass,
+              COUNT(*) AS games,
+              SUM(result = 'win') AS wins,
+              SUM(result = 'loss') AS losses,
+              SUM(result = 'draw') AS draws,
+              SUM(analysis_status = 'analyzed') AS analyzed,
+              AVG(CASE WHEN analysis_status = 'analyzed'
+                       THEN (CASE WHEN user_color = 'white' THEN accuracy_white ELSE accuracy_black END)
+                  END) AS avg_accuracy
+       FROM games
+       WHERE time_control IS NOT NULL
+       GROUP BY time_control
+       ORDER BY games DESC`
+    )
+    .all() as {
+    timeControl: string
+    timeClass: string | null
+    games: number
+    wins: number | null
+    losses: number | null
+    draws: number | null
+    analyzed: number | null
+    avg_accuracy: number | null
+  }[]
+  return rows.map((r) => ({
+    timeControl: r.timeControl,
+    timeClass: r.timeClass,
+    games: r.games,
+    wins: r.wins ?? 0,
+    losses: r.losses ?? 0,
+    draws: r.draws ?? 0,
+    analyzed: r.analyzed ?? 0,
+    avgAccuracy: r.avg_accuracy
+  }))
+}
 
 export function openingStats(minGames = 1): OpeningStat[] {
   const rows = getDb()
