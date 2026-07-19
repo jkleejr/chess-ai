@@ -12,21 +12,21 @@ import {
 } from 'recharts'
 import type { ExtendedStats } from '../../../shared/types'
 
-// Categorical slots (validated for the dark card surface, adjacent-pair CVD-safe,
+// Categorical slots (validated for the black surface, adjacent-pair CVD-safe,
 // fixed assignment by entity — never by rank).
 const TIME_CLASS_COLORS: Record<string, string> = {
   blitz: '#3987e5',
-  rapid: '#008300',
+  rapid: '#2fae2f',
   bullet: '#d55181',
   daily: '#c98500'
 }
-const STATUS_SERIOUS = '#e66767' // blunder metrics: the series MEANS bad
-const SINGLE_HUE = '#3987e5' // magnitude charts: one hue
+const STATUS_SERIOUS = '#ff4b4b' // blunder metrics: the series MEANS bad
+const SINGLE_HUE = '#ffffff' // magnitude charts: white bars on black
 
 const TOOLTIP_STYLE = {
-  background: 'var(--bg-raised)',
-  border: '1px solid var(--border)',
-  borderRadius: 8,
+  background: '#0d0d0d',
+  border: '1px solid #333333',
+  borderRadius: 0,
   fontSize: 12
 } as const
 
@@ -218,7 +218,7 @@ export function ClockChart({ stats }: { stats: ExtendedStats }): React.JSX.Eleme
 // --- how games end ----------------------------------------------------------
 
 const TERMINATION_ORDER = ['checkmate', 'resignation', 'timeout', 'abandoned', 'other']
-const TERMINATION_COLORS = ['#3987e5', '#008300', '#d55181', '#c98500', '#6b6963']
+const TERMINATION_COLORS = ['#3987e5', '#2fae2f', '#d55181', '#c98500', '#777777']
 
 export function TerminationChart({ stats }: { stats: ExtendedStats }): React.JSX.Element {
   const rows = (['win', 'loss'] as const).map((result) => {

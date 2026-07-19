@@ -22,9 +22,7 @@ export default function Onboarding(): React.JSX.Element {
   return (
     <div className="onboarding">
       <div className="card">
-        <h1>
-          Welcome to My <span style={{ color: 'var(--accent)' }}>Chess</span>
-        </h1>
+        <h1>Welcome to My Chess</h1>
         <p className="muted">
           Your personal AI chess coach. Enter your chess.com username and every game you have played
           will be downloaded, analyzed by Stockfish, and coached by Claude.

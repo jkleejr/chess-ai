@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>T2 — Noir (black)</title>
+<style>
+/* T2 "NOIR" — Die Lit. True black, condensed display caps, colors exist ONLY
+   as data ink; everything else is white/gray typography on black. */
+* { box-sizing: border-box; margin: 0; }
+:root {
+  --black: #000000;
+  --panel: #0a0a0a;
+  --white: #ffffff;
+  --gray: #9a9a9a;
+  --gray-2: #555555;
+  --line: #222222;
+  --red: #ff2b2b;      /* the alarm color */
+  --c-blue: #3987e5;   /* dark-mode validated chart slots */
+  --c-green: #2fae2f;
+  --c-magenta: #d55181;
+  --c-yellow: #c98500;
+}
+body {
+  font-family: 'Helvetica Neue', -apple-system, sans-serif;
+  background: var(--black); color: var(--white);
+  display: flex; height: 100vh; overflow: hidden;
+}
+.mono { font-family: 'SF Mono', Menlo, monospace; }
+.cond { font-family: 'Helvetica Neue', sans-serif; font-stretch: condensed; font-weight: 900; text-transform: uppercase; }
+
+.sidebar { width: 190px; background: var(--black); border-right: 1px solid var(--line); padding: 48px 0 16px; flex-shrink: 0; }
+.brand { padding: 0 20px 30px; font-weight: 900; font-size: 16px; text-transform: uppercase; letter-spacing: 2px; }
+.brand .k { font-size: 22px; vertical-align: -3px; margin-right: 4px; }
+.nav a { display: block; padding: 12px 20px; color: var(--gray-2); text-decoration: none; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; }
+.nav a.active { color: var(--white); }
+.nav a.active::before { content: "■ "; color: var(--red); font-size: 8px; vertical-align: 2px; }
+
+.main { flex: 1; overflow-y: auto; padding: 40px 44px; }
+
+.page-head { margin-bottom: 34px; }
+.page-head h1 { font-size: 56px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; line-height: 0.95; }
+.page-head .sub { color: var(--gray-2); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-top: 10px; }
+
+/* stat wall: enormous numerals, hairline separators, advisory-sticker labels */
+.tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-bottom: 40px; }
+.tile { padding: 22px 18px; border-right: 1px solid var(--line); }
+.tile:last-child { border-right: 0; }
+.tile .lbl { display: inline-block; background: var(--white); color: var(--black); font-size: 9px; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 7px; margin-bottom: 14px; }
+.tile .val { font-size: 46px; font-weight: 900; letter-spacing: -2px; line-height: 1; }
+.tile .val.bad { color: var(--red); }
+.tile .val.good { color: var(--c-green); }
+.tile .sub { font-size: 11px; color: var(--gray-2); margin-top: 10px; }
+
+.sec { margin-bottom: 44px; }
+.sec-head { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.sec-head h2 { font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2.5px; }
+.sec-head .rule { flex: 1; height: 1px; background: var(--line); }
+.sec-head .tag { font-family: 'SF Mono', Menlo, monospace; color: var(--gray-2); font-size: 10px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; }
+svg text { font-family: 'SF Mono', Menlo, monospace; }
+</style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><span class="k">♞</span>My Chess</div>
+    <nav class="nav">
+      <a href="#">Games</a>
+      <a href="#" class="active">Insights</a>
+      <a href="#">Settings</a>
+    </nav>
+  </aside>
+  <main class="main">
+    <div class="page-head">
+      <h1>Insights</h1>
+      <div class="sub">574 games — givemeurloott — explicit blunders</div>
+    </div>
+
+    <div class="tiles">
+      <div class="tile"><span class="lbl">Thrown wins</span><div class="val bad">81</div><div class="sub">of 301 winning positions</div></div>
+      <div class="tile"><span class="lbl">Conversion</span><div class="val">73%</div><div class="sub">winning positions held</div></div>
+      <div class="tile"><span class="lbl">Comebacks</span><div class="val good">85</div><div class="sub">won from lost positions</div></div>
+      <div class="tile"><span class="lbl">Timeouts</span><div class="val bad">70</div><div class="sub">games lost on the clock</div></div>
+      <div class="tile"><span class="lbl">Last 30</span><div class="val">68.4%</div><div class="sub" style="color:var(--red)">▼ 2.2 vs previous</div></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><h2>Rating over time</h2><div class="rule"></div><span class="tag">2024—2026</span></div>
+      <svg width="100%" height="210" viewBox="0 0 1100 210" preserveAspectRatio="none">
+        <line x1="0" y1="52" x2="1100" y2="52" stroke="#1a1a1a"/>
+        <line x1="0" y1="105" x2="1100" y2="105" stroke="#1a1a1a"/>
+        <line x1="0" y1="158" x2="1100" y2="158" stroke="#1a1a1a"/>
+        <path d="M0,42 L60,58 L140,74 L240,82 L340,84 L440,89 L560,92 L680,99 L800,115 L920,123 L1050,120 L1100,118" fill="none" stroke="#2fae2f" stroke-width="2.5"/>
+        <path d="M120,100 L180,126 L260,145 L360,138 L460,141 L560,147 L680,149 L800,162 L920,155 L1050,151 L1100,153" fill="none" stroke="#3987e5" stroke-width="2.5"/>
+        <path d="M0,134 L140,138 L300,147 L480,152 L640,155 L800,170 L950,176 L1100,180" fill="none" stroke="#d55181" stroke-width="2.5"/>
+        <text x="1010" y="110" font-size="11" fill="#2fae2f" font-weight="700">RAPID 990</text>
+        <text x="1010" y="145" font-size="11" fill="#3987e5" font-weight="700">BLITZ 780</text>
+        <text x="1010" y="196" font-size="11" fill="#d55181" font-weight="700">BULLET 640</text>
+      </svg>
+    </div>
+
+    <div class="two-col">
+      <div class="sec">
+        <div class="sec-head"><h2>Accuracy by phase</h2><div class="rule"></div></div>
+        <svg width="100%" height="175" viewBox="0 0 480 175">
+          <rect x="40" y="30"  width="335" height="30" fill="#ffffff"/>
+          <rect x="40" y="76"  width="327" height="30" fill="#ffffff"/>
+          <rect x="40" y="122" width="354" height="30" fill="#ffffff"/>
+          <text x="384" y="51"  font-size="13" fill="#ffffff" font-weight="700">83.9</text>
+          <text x="376" y="97"  font-size="13" fill="#ff2b2b" font-weight="700">81.7</text>
+          <text x="402" y="143" font-size="13" fill="#ffffff" font-weight="700">88.5</text>
+          <text x="0" y="51"  font-size="10" fill="#555">OPEN</text>
+          <text x="0" y="97"  font-size="10" fill="#555">MID</text>
+          <text x="0" y="143" font-size="10" fill="#555">END</text>
+        </svg>
+      </div>
+      <div class="sec">
+        <div class="sec-head"><h2>Blunders vs clock</h2><div class="rule"></div></div>
+        <svg width="100%" height="175" viewBox="0 0 480 175">
+          <g font-size="10" fill="#555">
+            <rect x="10"  y="118" width="60" height="34" fill="#ffffff"/>
+            <rect x="104" y="108" width="60" height="44" fill="#ffffff"/>
+            <rect x="198" y="113" width="60" height="39" fill="#ffffff"/>
+            <rect x="292" y="98"  width="60" height="54" fill="#ff2b2b"/>
+            <rect x="386" y="76"  width="60" height="76" fill="#ff2b2b"/>
+            <text x="24"  y="110" fill="#fff" font-weight="700">6.2</text>
+            <text x="118" y="100" fill="#fff" font-weight="700">8.2</text>
+            <text x="212" y="105" fill="#fff" font-weight="700">7.1</text>
+            <text x="298" y="90"  fill="#ff2b2b" font-weight="700">10.1</text>
+            <text x="390" y="68"  fill="#ff2b2b" font-weight="700">13.7 ??</text>
+            <text x="20"  y="168">>2M</text><text x="110" y="168">1–2M</text><text x="202" y="168">30–60S</text><text x="299" y="168">10–30S</text><text x="398" y="168">&lt;10S</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><h2>Your style</h2><div class="rule"></div><span class="tag">COACH</span></div>
+      <p style="max-width:840px; line-height:1.7; font-size:14px; color:#cfcfcf;">
+        An attacking, gambit-friendly player who scores strongly in sharp, forcing lines
+        (<b style="color:#fff">King's Gambit, Vienna Gambit, Scandinavian</b>) but leaks points in slower
+        structural battles — reflexive, unaudited captures rather than calculated plans. Accuracy is
+        solid (69–73%) but a losing record
+        (<span class="mono" style="color:var(--red);font-weight:700">248W–304L</span>) points to a
+        conversion problem: winning positions are being given back.
+      </p>
+    </div>
+  </main>
+</body>
+</html>

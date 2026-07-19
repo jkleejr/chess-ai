@@ -40,9 +40,9 @@ export default function AccuracyChart({ points }: Props): React.JSX.Element {
         <YAxis domain={[40, 100]} stroke="var(--text-faint)" fontSize={11} />
         <Tooltip
           contentStyle={{
-            background: 'var(--bg-raised)',
-            border: '1px solid var(--border)',
-            borderRadius: 8,
+            background: '#0d0d0d',
+            border: '1px solid #333333',
+            borderRadius: 0,
             fontSize: 12
           }}
         />
@@ -54,13 +54,7 @@ export default function AccuracyChart({ points }: Props): React.JSX.Element {
           opacity={0.5}
           name="Per game"
         />
-        <Line
-          dataKey="rolling"
-          stroke="var(--accent)"
-          dot={false}
-          strokeWidth={2}
-          name="10-game avg"
-        />
+        <Line dataKey="rolling" stroke="#ffffff" dot={false} strokeWidth={2} name="10-game avg" />
       </LineChart>
     </ResponsiveContainer>
   )

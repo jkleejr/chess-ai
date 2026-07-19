@@ -5,20 +5,22 @@
   margin: 0;
 }
 
+/* NOIR theme: true black, white type, hairline rules. Color appears only as
+   data ink — red for damage, green for good, chart series. */
 :root {
-  --bg: #1a1b1e;
-  --bg-raised: #232428;
-  --bg-hover: #2b2d31;
-  --border: #34363c;
-  --text: #e8e6e3;
-  --text-dim: #9a9891;
-  --text-faint: #6b6963;
-  --accent: #7fa650; /* chess-green */
-  --accent-hover: #8fb95c;
-  --blue: #5b9bd5;
-  --win: #7fa650;
-  --loss: #d0614e;
-  --draw: #9a9891;
+  --bg: #000000;
+  --bg-raised: #000000;
+  --bg-hover: #161616;
+  --border: #222222;
+  --text: #ffffff;
+  --text-dim: #9a9a9a;
+  --text-faint: #555555;
+  --accent: #ff2b2b; /* alarm red — the one accent */
+  --accent-hover: #ff5c5c;
+  --blue: #3987e5;
+  --win: #2fae2f;
+  --loss: #ff4b4b;
+  --draw: #9a9a9a;
   --brilliant: #26c2a3;
   --best: #81b64c;
   --excellent: #81b64c;
@@ -26,7 +28,7 @@
   --book: #a88865;
   --inaccuracy: #f0c15c;
   --mistake: #e58f2a;
-  --blunder: #fa412d;
+  --blunder: #ff4b4b;
   font-size: 14px;
 }
 
@@ -38,12 +40,16 @@ body,
 
 body {
   font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   user-select: none;
   overflow: hidden;
+}
+
+.mono {
+  font-family: 'SF Mono', Menlo, monospace;
 }
 
 /* ---------- app shell ---------- */
@@ -56,11 +62,11 @@ body {
 .sidebar {
   width: 200px;
   flex-shrink: 0;
-  background: var(--bg-raised);
+  background: var(--bg);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  padding-top: 44px; /* traffic-light inset */
+  padding-top: 48px; /* traffic-light inset */
   -webkit-app-region: drag;
 }
 
@@ -68,53 +74,57 @@ body {
   -webkit-app-region: no-drag;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 8px;
+  padding: 8px 0;
 }
 
 .sidebar .brand {
-  padding: 0 16px 14px;
-  font-weight: 700;
+  padding: 0 20px 26px;
+  font-weight: 900;
   font-size: 15px;
-  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
-.sidebar .brand span {
-  color: var(--accent);
+.sidebar .brand .knight {
+  font-size: 20px;
+  margin-right: 5px;
+  vertical-align: -2px;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
-  border-radius: 8px;
-  color: var(--text-dim);
+  padding: 12px 20px;
+  color: var(--text-faint);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 .nav-link:hover {
-  background: var(--bg-hover);
-  color: var(--text);
+  color: var(--text-dim);
 }
 
 .nav-link.active {
-  background: var(--bg-hover);
   color: var(--text);
 }
 
-.nav-link .icon {
-  font-size: 16px;
-  width: 20px;
-  text-align: center;
+.nav-link.active::before {
+  content: '■';
+  color: var(--accent);
+  font-size: 7px;
+  margin-right: 9px;
+  vertical-align: 2px;
 }
 
 .sidebar .status-area {
   margin-top: auto;
-  padding: 12px;
-  font-size: 12px;
+  padding: 14px 20px;
+  font-size: 11px;
   color: var(--text-faint);
+  border-top: 1px solid var(--border);
   -webkit-app-region: no-drag;
   display: flex;
   flex-direction: column;
@@ -124,7 +134,7 @@ body {
 .main-content {
   flex: 1;
   overflow-y: auto;
-  padding: 28px 32px;
+  padding: 34px 40px;
 }
 
 .main-content.no-pad {
@@ -135,20 +145,27 @@ body {
 /* ---------- generic ---------- */
 
 h1 {
-  font-size: 22px;
-  margin-bottom: 18px;
+  font-size: 38px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  margin-bottom: 22px;
 }
 
 h2 {
-  font-size: 16px;
-  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  margin-bottom: 14px;
 }
 
 .card {
-  background: var(--bg-raised);
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px;
+  border-radius: 0;
+  padding: 20px;
 }
 
 .muted {
@@ -163,38 +180,43 @@ h2 {
 button,
 .btn {
   font: inherit;
-  background: var(--bg-hover);
+  background: var(--bg);
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 14px;
+  border: 1px solid var(--text);
+  border-radius: 0;
+  padding: 8px 16px;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 800;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
 }
 
 button:hover:not(:disabled) {
-  border-color: var(--text-faint);
+  background: var(--text);
+  color: var(--bg);
 }
 
 button:disabled {
-  opacity: 0.5;
+  opacity: 0.35;
   cursor: default;
+  border-color: var(--text-faint);
 }
 
 button.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #14200a;
-  font-weight: 600;
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
 }
 
 button.primary:hover:not(:disabled) {
-  background: var(--accent-hover);
+  background: var(--text-dim);
+  border-color: var(--text-dim);
 }
 
 button.small {
   padding: 4px 10px;
-  font-size: 12.5px;
+  font-size: 10.5px;
 }
 
 input,
@@ -202,15 +224,23 @@ select {
   font: inherit;
   background: var(--bg);
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  border: 1px solid #333333;
+  border-radius: 0;
   padding: 8px 12px;
   outline: none;
   user-select: text;
 }
 
-input:focus {
-  border-color: var(--accent);
+select {
+  text-transform: uppercase;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--text);
 }
 
 .error-text {
@@ -224,14 +254,14 @@ input:focus {
 }
 
 progress {
-  accent-color: var(--accent);
+  accent-color: var(--text);
   width: 100%;
 }
 
 .spinner {
   display: inline-block;
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   border: 2px solid var(--border);
   border-top-color: var(--accent);
   border-radius: 50%;
@@ -255,18 +285,20 @@ progress {
 }
 
 .onboarding .card {
-  width: 440px;
-  padding: 32px;
+  width: 460px;
+  padding: 36px;
+  border-color: #333333;
 }
 
 .onboarding h1 {
-  margin-bottom: 6px;
+  font-size: 28px;
+  margin-bottom: 8px;
 }
 
 .onboarding form {
   display: flex;
   gap: 8px;
-  margin-top: 18px;
+  margin-top: 20px;
 }
 
 .onboarding input {
@@ -285,28 +317,31 @@ progress {
 .filters {
   display: flex;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 18px;
   align-items: center;
 }
 
 .game-table {
   width: 100%;
   border-collapse: collapse;
+  border-top: 1px solid var(--text);
 }
 
 .game-table th {
   text-align: left;
-  font-size: 12px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-faint);
-  padding: 6px 10px;
+  letter-spacing: 1.5px;
+  font-weight: 800;
+  color: var(--text-dim);
+  padding: 10px 10px 8px;
   border-bottom: 1px solid var(--border);
 }
 
 .game-table td {
-  padding: 9px 10px;
+  padding: 10px;
   border-bottom: 1px solid var(--border);
+  font-size: 13.5px;
 }
 
 .game-table tbody tr {
@@ -319,31 +354,34 @@ progress {
 
 .result-chip {
   display: inline-block;
-  min-width: 20px;
+  min-width: 22px;
   text-align: center;
   padding: 1px 7px;
-  border-radius: 5px;
-  font-weight: 700;
-  font-size: 12px;
+  border-radius: 0;
+  font-weight: 800;
+  font-size: 11.5px;
+  font-family: 'SF Mono', Menlo, monospace;
 }
 
 .result-win {
-  background: rgba(127, 166, 80, 0.18);
+  border: 1px solid var(--win);
   color: var(--win);
 }
 
 .result-loss {
-  background: rgba(208, 97, 78, 0.16);
+  border: 1px solid var(--loss);
   color: var(--loss);
 }
 
 .result-draw {
-  background: rgba(154, 152, 145, 0.16);
+  border: 1px solid var(--text-faint);
   color: var(--draw);
 }
 
 .acc {
   font-variant-numeric: tabular-nums;
+  font-family: 'SF Mono', Menlo, monospace;
+  font-size: 12.5px;
 }
 
 /* ---------- game review ---------- */
@@ -371,7 +409,7 @@ progress {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 12px;
   gap: 8px;
 }
 
@@ -381,8 +419,8 @@ progress {
 }
 
 .nav-buttons button {
-  padding: 6px 12px;
-  font-size: 15px;
+  padding: 5px 12px;
+  font-size: 14px;
 }
 
 .side-column {
@@ -395,18 +433,18 @@ progress {
 }
 
 .eval-bar {
-  width: 22px;
-  border-radius: 6px;
+  width: 20px;
+  border-radius: 0;
   overflow: hidden;
-  background: #403d39;
+  background: #2b2b2b;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  border: 1px solid var(--border);
+  border: 1px solid #333333;
 }
 
 .eval-bar .white-part {
-  background: #f0efeb;
+  background: #ffffff;
   transition: height 0.25s ease;
 }
 
@@ -414,17 +452,18 @@ progress {
   flex: 1;
   min-height: 100px;
   overflow-y: auto;
-  background: var(--bg-raised);
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 0;
   padding: 8px;
 }
 
 .move-grid {
   display: grid;
   grid-template-columns: 34px 1fr 1fr;
-  font-size: 13.5px;
+  font-size: 13px;
   line-height: 1.9;
+  font-family: 'SF Mono', Menlo, monospace;
 }
 
 .move-num {
@@ -435,7 +474,7 @@ progress {
 
 .move-cell {
   padding: 0 6px;
-  border-radius: 5px;
+  border-radius: 0;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -445,8 +484,12 @@ progress {
 }
 
 .move-cell.current {
-  background: var(--bg-hover);
-  outline: 1px solid var(--text-faint);
+  background: var(--text);
+  color: var(--bg);
+}
+
+.move-cell.current .glyph {
+  color: var(--bg);
 }
 
 .glyph {
@@ -456,10 +499,10 @@ progress {
 }
 
 .coach-panel {
-  background: var(--bg-raised);
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px;
+  border-radius: 0;
+  padding: 16px;
   overflow-y: auto;
   max-height: 46vh;
   user-select: text;
@@ -467,27 +510,31 @@ progress {
 }
 
 .coach-panel h3 {
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-faint);
-  margin-bottom: 8px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
 }
 
 .coach-panel p {
   margin-bottom: 8px;
-  line-height: 1.55;
+  line-height: 1.6;
   font-size: 13.5px;
+  color: #d6d6d6;
 }
 
 .concept-chip {
   display: inline-block;
-  background: rgba(91, 155, 213, 0.15);
-  color: var(--blue);
-  border-radius: 5px;
-  padding: 1px 8px;
-  font-size: 12px;
-  font-weight: 600;
+  background: var(--text);
+  color: var(--bg);
+  border-radius: 0;
+  padding: 2px 8px;
+  font-size: 10.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   margin: 0 6px 8px 0;
 }
 
@@ -499,15 +546,18 @@ progress {
 }
 
 .review-header .title {
-  font-weight: 700;
-  font-size: 15px;
+  font-weight: 800;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .accuracy-badges {
   display: flex;
   gap: 10px;
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--text-dim);
+  font-family: 'SF Mono', Menlo, monospace;
 }
 
 /* ---------- insights ---------- */
@@ -515,7 +565,7 @@ progress {
 .insights-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 20px;
 }
 
 .insights-grid .full {
@@ -531,14 +581,16 @@ progress {
 .stat-table th,
 .stat-table td {
   text-align: left;
-  padding: 5px 8px;
+  padding: 6px 8px;
   border-bottom: 1px solid var(--border);
 }
 
 .stat-table th {
-  color: var(--text-faint);
-  font-size: 11px;
+  color: var(--text-dim);
+  font-size: 10px;
+  font-weight: 800;
   text-transform: uppercase;
+  letter-spacing: 1.2px;
 }
 
 .tag-cloud {
@@ -548,26 +600,45 @@ progress {
 }
 
 .tag {
-  background: var(--bg-hover);
-  border: 1px solid var(--border);
-  border-radius: 999px;
+  background: var(--bg);
+  border: 1px solid #333333;
+  border-radius: 0;
   padding: 3px 11px;
-  font-size: 12.5px;
+  font-size: 12px;
 }
 
 .tag b {
-  color: var(--accent);
+  color: var(--text);
+  font-family: 'SF Mono', Menlo, monospace;
 }
 
 .markdown {
-  line-height: 1.6;
+  line-height: 1.65;
   user-select: text;
+  color: #d6d6d6;
 }
 
 .markdown h1,
 .markdown h2,
 .markdown h3 {
-  margin: 14px 0 8px;
+  margin: 16px 0 8px;
+  color: var(--text);
+}
+
+.markdown h1 {
+  font-size: 20px;
+  letter-spacing: 0;
+}
+
+.markdown h2 {
+  font-size: 13px;
+}
+
+.markdown h3 {
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .markdown ul,
@@ -580,24 +651,31 @@ progress {
   margin-bottom: 8px;
 }
 
+.markdown strong {
+  color: var(--text);
+}
+
 /* ---------- settings ---------- */
 
 .settings-form {
   max-width: 560px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 22px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 
 .field label {
-  font-weight: 600;
-  font-size: 13px;
+  font-weight: 800;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
 }
 
 .field .row {
@@ -614,28 +692,40 @@ progress {
 .tile-row {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
 .stat-tile {
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 16px;
+  background: var(--bg);
+  border: none;
+  border-right: 1px solid var(--border);
+  border-radius: 0;
+  padding: 20px 18px;
+}
+
+.stat-tile:last-child {
+  border-right: none;
 }
 
 .tile-label {
-  font-size: 11px;
+  display: inline-block;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 9px;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-faint);
-  margin-bottom: 6px;
+  letter-spacing: 1.5px;
+  padding: 3px 7px;
+  margin-bottom: 14px;
 }
 
 .tile-value {
-  font-size: 26px;
-  font-weight: 700;
-  line-height: 1.1;
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 
@@ -644,11 +734,11 @@ progress {
 }
 
 .tile-bad {
-  color: var(--loss);
+  color: var(--accent);
 }
 
 .tile-sub {
-  font-size: 11.5px;
-  color: var(--text-dim);
-  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-top: 10px;
 }
