@@ -11,9 +11,12 @@ import { locateStockfish } from './stockfishProvision'
  * Singleton FIFO queue over pending games. One game analyzed at a time; the
  * engine pool parallelizes positions within a game (best latency-to-first-result).
  */
+const MAX_ATTEMPTS = 3
+
 class AnalysisQueue {
   private queue: number[] = []
   private queued = new Set<number>()
+  private attempts = new Map<number, number>()
   private running = false
   private currentGameId: number | null = null
   private currentPct = 0
@@ -95,7 +98,17 @@ class AnalysisQueue {
           this.onGameAnalyzed?.(gameId)
         } catch (e) {
           console.error(`analysis of game ${gameId} failed:`, e)
-          setAnalysisStatus(gameId, 'error')
+          // Engine deaths are usually transient — retry a couple of times
+          // before giving up on the game.
+          const tries = (this.attempts.get(gameId) ?? 0) + 1
+          this.attempts.set(gameId, tries)
+          if (tries < MAX_ATTEMPTS) {
+            setAnalysisStatus(gameId, 'pending')
+            this.queued.add(gameId)
+            this.queue.push(gameId)
+          } else {
+            setAnalysisStatus(gameId, 'error')
+          }
           // Engine may have died mid-game; rebuild pool before continuing.
           this.resetPool()
           const next = await this.ensurePool()

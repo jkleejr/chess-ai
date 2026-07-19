@@ -73,8 +73,9 @@ export function registerIpcHandlers(win: BrowserWindow): void {
     syncRunning = true
     ;(async () => {
       try {
-        const newIds = await syncGames(username, (p: SyncProgress) => send(IPC.evSyncProgress, p))
-        analysisQueue.enqueue(newIds)
+        await syncGames(username, (p: SyncProgress) => send(IPC.evSyncProgress, p))
+        // enqueueAllPending orders newest-first, which is the order the user
+        // cares about — don't pre-enqueue newIds (insertion order = oldest first).
         analysisQueue.enqueueAllPending()
       } catch (e) {
         const message =

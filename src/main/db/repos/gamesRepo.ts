@@ -131,7 +131,9 @@ export function getGamePgn(id: number): string | null {
 export function listPendingGameIds(): number[] {
   return (
     getDb()
-      .prepare("SELECT id FROM games WHERE analysis_status IN ('pending','analyzing') ORDER BY end_time DESC")
+      // 'analyzing' = interrupted mid-run last session; 'error' games get a
+      // fresh chance each session (transient engine crashes).
+      .prepare("SELECT id FROM games WHERE analysis_status IN ('pending','analyzing','error') ORDER BY end_time DESC")
       .all() as { id: number }[]
   ).map((r) => r.id)
 }
