@@ -9,7 +9,9 @@ export interface ProfileRecord {
 
 export function getProfile(): ProfileRecord | null {
   const row = getDb()
-    .prepare('SELECT version, profile_json, games_analyzed FROM player_profile ORDER BY version DESC LIMIT 1')
+    .prepare(
+      'SELECT version, profile_json, games_analyzed FROM player_profile ORDER BY version DESC LIMIT 1'
+    )
     .get() as { version: number; profile_json: string; games_analyzed: number } | undefined
   if (!row) return null
   try {

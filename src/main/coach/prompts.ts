@@ -103,7 +103,9 @@ export function buildMovePrompt(game: GameSummary, move: MoveEval, contextSans: 
     `Move played at ply ${move.ply}: ${move.san} (classified ${move.classification ?? 'unclassified'}, cp loss ${move.cpLoss ?? '?'})${fmtClock(move)}`,
     `Engine best move: ${move.bestMoveSan ?? move.bestMoveUci ?? 'n/a'}. Eval after played move (white POV): ${fmtEval(move)}.`,
     '',
-    move.classification === 'best' || move.classification === 'excellent' || move.classification === 'book'
+    move.classification === 'best' ||
+    move.classification === 'excellent' ||
+    move.classification === 'book'
       ? 'This was a good move — explain why it works and what plan it supports.'
       : 'Explain what is wrong with the played move, what the engine move achieves in human terms, and the key idea to remember.'
   ].join('\n')
@@ -134,7 +136,9 @@ export function buildStyleReportPrompt(
     JSON.stringify(reviews, null, 2),
     '',
     '=== PREVIOUS PROFILE ===',
-    previousProfile ? JSON.stringify(previousProfile, null, 2) : 'none — this is the first style report',
+    previousProfile
+      ? JSON.stringify(previousProfile, null, 2)
+      : 'none — this is the first style report',
     '',
     'Instructions:',
     '- "report" is a thorough markdown document addressed to the student: their style described in plain language, what they do well, their 3-5 most damaging recurring mistakes with evidence from the data, opening repertoire assessment (what works, what leaks points, 2-3 concrete openings to try and why they fit this style), time management, and a prioritized improvement plan.',

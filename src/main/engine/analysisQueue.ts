@@ -91,7 +91,10 @@ class AnalysisQueue {
     if (this.pool) return this.pool
     const status: EngineStatus = await locateStockfish()
     if (status.state !== 'ready' || !status.path) return null
-    const size = Math.max(1, Math.min(6, parseInt(getSetting(SETTING_KEYS.enginePoolSize) ?? '2', 10)))
+    const size = Math.max(
+      1,
+      Math.min(6, parseInt(getSetting(SETTING_KEYS.enginePoolSize) ?? '2', 10))
+    )
     this.pool = new EnginePool(status.path, size)
     await this.pool.start()
     return this.pool

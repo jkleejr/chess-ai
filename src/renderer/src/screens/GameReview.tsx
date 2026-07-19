@@ -104,9 +104,7 @@ export default function GameReview(): React.JSX.Element {
   return (
     <div className="review-layout">
       <div className="board-column">
-        {analyzed && (
-          <EvalBar evalCp={current?.evalCp ?? 0} evalMate={current?.evalMate ?? null} />
-        )}
+        {analyzed && <EvalBar evalCp={current?.evalCp ?? 0} evalMate={current?.evalMate ?? null} />}
         <div>
           <Board
             fen={fen}

@@ -99,10 +99,8 @@ export function registerIpcHandlers(win: BrowserWindow): void {
   })
 
   // --- games ---
-  ipcMain.handle(
-    IPC.gamesList,
-    (_e, offset: number, limit: number, filter?: GameListFilter) =>
-      listGames(offset, limit, filter)
+  ipcMain.handle(IPC.gamesList, (_e, offset: number, limit: number, filter?: GameListFilter) =>
+    listGames(offset, limit, filter)
   )
   ipcMain.handle(IPC.gamesCount, () => countGames())
   ipcMain.handle(IPC.gamesGet, (_e, gameId: number): GameDetail | null => {

@@ -123,24 +123,29 @@ export function getGameSummary(id: number): GameSummary | null {
 
 export function getGamePgn(id: number): string | null {
   const row = getDb().prepare('SELECT pgn FROM games WHERE id = ?').get(id) as
-    | { pgn: string }
-    | undefined
+    { pgn: string } | undefined
   return row?.pgn ?? null
 }
 
 export function listPendingGameIds(): number[] {
   return (
-    getDb()
-      // 'analyzing' = interrupted mid-run last session; 'error' games get a
-      // fresh chance each session (transient engine crashes).
-      .prepare("SELECT id FROM games WHERE analysis_status IN ('pending','analyzing','error') ORDER BY end_time DESC")
-      .all() as { id: number }[]
-  ).map((r) => r.id)
+    (
+      getDb()
+        // 'analyzing' = interrupted mid-run last session; 'error' games get a
+        // fresh chance each session (transient engine crashes).
+        .prepare(
+          "SELECT id FROM games WHERE analysis_status IN ('pending','analyzing','error') ORDER BY end_time DESC"
+        )
+        .all() as { id: number }[]
+    ).map((r) => r.id)
+  )
 }
 
 /** Games interrupted mid-analysis by an app quit go back to pending (not enqueued). */
 export function resetStuckAnalyzing(): void {
-  getDb().prepare("UPDATE games SET analysis_status = 'pending' WHERE analysis_status = 'analyzing'").run()
+  getDb()
+    .prepare("UPDATE games SET analysis_status = 'pending' WHERE analysis_status = 'analyzing'")
+    .run()
 }
 
 export function setAnalysisStatus(id: number, status: AnalysisStatus): void {

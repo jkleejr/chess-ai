@@ -33,13 +33,11 @@ export const useAppStore = create<AppState>((set, get) => ({
       set({ analysis: { queued: p.queued, currentGameId: p.gameId, currentPct: p.pct } })
     )
     events.onGameAnalyzed(() => {
-      void api
-        .analysisStatus()
-        .then((s) =>
-          set({
-            analysis: { queued: s.queued, currentGameId: s.currentGameId, currentPct: s.currentPct }
-          })
-        )
+      void api.analysisStatus().then((s) =>
+        set({
+          analysis: { queued: s.queued, currentGameId: s.currentGameId, currentPct: s.currentPct }
+        })
+      )
     })
 
     await get().refreshSettings()

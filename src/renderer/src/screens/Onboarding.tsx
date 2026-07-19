@@ -26,8 +26,8 @@ export default function Onboarding(): React.JSX.Element {
           Welcome to Chess<span style={{ color: 'var(--accent)' }}>Coach</span>
         </h1>
         <p className="muted">
-          Your personal AI chess coach. Enter your chess.com username and every game you have
-          played will be downloaded, analyzed by Stockfish, and coached by Claude.
+          Your personal AI chess coach. Enter your chess.com username and every game you have played
+          will be downloaded, analyzed by Stockfish, and coached by Claude.
         </p>
         <form onSubmit={submit}>
           <input
@@ -46,10 +46,7 @@ export default function Onboarding(): React.JSX.Element {
           <div className="progress-area">
             {syncing && (
               <>
-                <progress
-                  max={syncProgress.archiveTotal || 1}
-                  value={syncProgress.archiveIndex}
-                />
+                <progress max={syncProgress.archiveTotal || 1} value={syncProgress.archiveIndex} />
                 <div className="faint">
                   Archive {syncProgress.archiveIndex}/{syncProgress.archiveTotal || '…'} —{' '}
                   {syncProgress.gamesInserted} games downloaded

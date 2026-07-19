@@ -55,7 +55,11 @@ export function accuracyOverTime(): AccuracyPoint[] {
     .all() as { end_time: number; accuracy: number | null; time_class: string | null }[]
   return rows
     .filter((r) => r.accuracy !== null)
-    .map((r) => ({ endTime: r.end_time, accuracy: r.accuracy!, timeClass: r.time_class ?? 'other' }))
+    .map((r) => ({
+      endTime: r.end_time,
+      accuracy: r.accuracy!,
+      timeClass: r.time_class ?? 'other'
+    }))
 }
 
 export interface AggregateStats {

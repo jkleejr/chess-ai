@@ -40,9 +40,9 @@ describe('moveAccuracy', () => {
 describe('classify', () => {
   const base = { isBestMove: false, isBook: false }
   it('book moves are book', () => {
-    expect(classify({ ...base, isBook: true, cpLoss: 0, winProbBefore: 50, winProbAfter: 50 })).toBe(
-      'book'
-    )
+    expect(
+      classify({ ...base, isBook: true, cpLoss: 0, winProbBefore: 50, winProbAfter: 50 })
+    ).toBe('book')
   })
   it('engine best move is best', () => {
     expect(

@@ -39,7 +39,8 @@ async function get(url: string, etag?: string | null): Promise<Response> {
     throw new ChesscomError(`Network error reaching chess.com: ${(e as Error).message}`)
   }
   if (res.status === 404) throw new ChesscomError('not found', 404)
-  if (res.status === 429) throw new ChesscomError('chess.com rate limit — try again in a minute', 429)
+  if (res.status === 429)
+    throw new ChesscomError('chess.com rate limit — try again in a minute', 429)
   if (!res.ok && res.status !== 304) {
     throw new ChesscomError(`chess.com returned HTTP ${res.status}`, res.status)
   }
@@ -61,8 +62,7 @@ export async function fetchArchives(username: string): Promise<string[]> {
 }
 
 export type ArchiveResult =
-  | { notModified: true }
-  | { notModified: false; games: ChesscomGame[]; etag: string | null }
+  { notModified: true } | { notModified: false; games: ChesscomGame[]; etag: string | null }
 
 export async function fetchArchiveGames(
   archiveUrl: string,

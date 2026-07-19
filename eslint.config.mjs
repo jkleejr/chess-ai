@@ -25,7 +25,10 @@ export default defineConfig(
     },
     rules: {
       ...eslintPluginReactHooks.configs.recommended.rules,
-      ...eslintPluginReactRefresh.configs.vite.rules
+      ...eslintPluginReactRefresh.configs.vite.rules,
+      // Flags the standard async fetch-on-mount pattern; our effects set state
+      // only after awaited IPC calls.
+      'react-hooks/set-state-in-effect': 'off'
     }
   },
   eslintConfigPrettier

@@ -66,7 +66,9 @@ export default function Insights(): React.JSX.Element {
           {profile ? (
             <>
               <p style={{ lineHeight: 1.6 }}>{profile.styleSummary}</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 12 }}>
+              <div
+                style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 12 }}
+              >
                 <div>
                   <h2 style={{ color: 'var(--win)' }}>Strengths</h2>
                   <ul style={{ paddingLeft: 18, lineHeight: 1.6 }}>
@@ -147,7 +149,11 @@ export default function Insights(): React.JSX.Element {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h2>Style report</h2>
             <button className="primary" onClick={() => void generate()} disabled={generating}>
-              {generating ? 'Generating (deep analysis)…' : report ? 'Regenerate report (~$0.15)' : 'Generate style report (~$0.15)'}
+              {generating
+                ? 'Generating (deep analysis)…'
+                : report
+                  ? 'Regenerate report (~$0.15)'
+                  : 'Generate style report (~$0.15)'}
             </button>
           </div>
           {error && <p className="error-text">{error}</p>}

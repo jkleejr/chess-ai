@@ -3,14 +3,7 @@
 export type AnalysisStatus = 'pending' | 'analyzing' | 'analyzed' | 'error'
 
 export type Classification =
-  | 'book'
-  | 'brilliant'
-  | 'best'
-  | 'excellent'
-  | 'good'
-  | 'inaccuracy'
-  | 'mistake'
-  | 'blunder'
+  'book' | 'brilliant' | 'best' | 'excellent' | 'good' | 'inaccuracy' | 'mistake' | 'blunder'
 
 export type GameResult = 'win' | 'loss' | 'draw'
 

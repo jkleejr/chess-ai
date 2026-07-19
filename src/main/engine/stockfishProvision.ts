@@ -72,9 +72,7 @@ export async function locateStockfish(): Promise<EngineStatus> {
 }
 
 /** Download the official Stockfish release for this Mac into userData/engines. */
-export async function downloadStockfish(
-  onProgress: (pct: number) => void
-): Promise<EngineStatus> {
+export async function downloadStockfish(onProgress: (pct: number) => void): Promise<EngineStatus> {
   const asset = releaseAsset()
   const url = `https://github.com/official-stockfish/Stockfish/releases/download/${RELEASE_TAG}/${asset}`
   const enginesDir = join(app.getPath('userData'), 'engines')

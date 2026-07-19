@@ -12,7 +12,11 @@ export function getArchiveState(archiveUrl: string): ArchiveState | null {
   return row ? { etag: row.etag, isComplete: !!row.is_complete } : null
 }
 
-export function saveArchiveState(archiveUrl: string, etag: string | null, isComplete: boolean): void {
+export function saveArchiveState(
+  archiveUrl: string,
+  etag: string | null,
+  isComplete: boolean
+): void {
   getDb()
     .prepare(
       `INSERT INTO sync_state (archive_url, etag, last_synced_at, is_complete)

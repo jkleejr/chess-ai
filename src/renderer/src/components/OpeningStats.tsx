@@ -24,7 +24,12 @@ export default function OpeningStats({ stats, color }: Props): React.JSX.Element
           return (
             <tr key={`${s.eco}-${s.color}`}>
               <td
-                style={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                style={{
+                  maxWidth: 240,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
+                }}
                 title={s.name}
               >
                 {s.name} <span className="faint">{s.eco}</span>

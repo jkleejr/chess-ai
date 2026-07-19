@@ -57,7 +57,11 @@ export default function CoachPanel({
     <div className="coach-panel">
       <h3>Coach</h3>
 
-      {error && <p className="error-text">{error.replace(/^Error invoking remote method '[^']+': (Error: )?/, '')}</p>}
+      {error && (
+        <p className="error-text">
+          {error.replace(/^Error invoking remote method '[^']+': (Error: )?/, '')}
+        </p>
+      )}
 
       {/* Per-move commentary when we have it */}
       {currentPly > 0 && currentMove && (
@@ -128,7 +132,11 @@ export default function CoachPanel({
       {!review && (
         <p>
           {game.analysisStatus === 'analyzed' ? (
-            <button className="small primary" onClick={() => void requestReview()} disabled={loadingReview}>
+            <button
+              className="small primary"
+              onClick={() => void requestReview()}
+              disabled={loadingReview}
+            >
               {loadingReview ? 'Coach is reviewing…' : 'Coach this game (~$0.01)'}
             </button>
           ) : (

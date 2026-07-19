@@ -80,7 +80,9 @@ export function getMoveExplanation(gameId: number, ply: number): MoveExplanation
 
 export function getLatestStyleReport(): StyleReport | null {
   const row = getDb()
-    .prepare("SELECT content FROM insights WHERE type = 'style_report' ORDER BY created_at DESC, id DESC LIMIT 1")
+    .prepare(
+      "SELECT content FROM insights WHERE type = 'style_report' ORDER BY created_at DESC, id DESC LIMIT 1"
+    )
     .get() as { content: string } | undefined
   if (!row) return null
   try {
@@ -90,7 +92,9 @@ export function getLatestStyleReport(): StyleReport | null {
   }
 }
 
-export function listRecentReviewSummaries(limit: number): { gameId: number; insight: GameInsight }[] {
+export function listRecentReviewSummaries(
+  limit: number
+): { gameId: number; insight: GameInsight }[] {
   const rows = getDb()
     .prepare(
       `SELECT i.game_id, i.content FROM insights i
@@ -111,9 +115,9 @@ export function listRecentReviewSummaries(limit: number): { gameId: number; insi
 }
 
 export function mistakeTagCounts(): { tag: string; count: number }[] {
-  const rows = getDb()
-    .prepare("SELECT content FROM insights WHERE type = 'game_review'")
-    .all() as { content: string }[]
+  const rows = getDb().prepare("SELECT content FROM insights WHERE type = 'game_review'").all() as {
+    content: string
+  }[]
   const counts = new Map<string, number>()
   for (const r of rows) {
     try {

@@ -93,7 +93,12 @@ export async function syncGames(
     const url = archives[i]
     const isCurrentMonth = i === archives.length - 1
     const state = getArchiveState(url)
-    onProgress({ phase: 'archives', archiveIndex: i + 1, archiveTotal: archives.length, gamesInserted })
+    onProgress({
+      phase: 'archives',
+      archiveIndex: i + 1,
+      archiveTotal: archives.length,
+      gamesInserted
+    })
 
     if (state?.isComplete && !isCurrentMonth) continue
 
@@ -113,9 +118,19 @@ export async function syncGames(
       }
     }
     saveArchiveState(url, result.etag, !isCurrentMonth)
-    onProgress({ phase: 'games', archiveIndex: i + 1, archiveTotal: archives.length, gamesInserted })
+    onProgress({
+      phase: 'games',
+      archiveIndex: i + 1,
+      archiveTotal: archives.length,
+      gamesInserted
+    })
   }
 
-  onProgress({ phase: 'done', archiveIndex: archives.length, archiveTotal: archives.length, gamesInserted })
+  onProgress({
+    phase: 'done',
+    archiveIndex: archives.length,
+    archiveTotal: archives.length,
+    gamesInserted
+  })
   return newIds
 }

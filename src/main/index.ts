@@ -38,6 +38,12 @@ function createWindow(): BrowserWindow {
   return mainWindow
 }
 
+// Keep the runtime app name stable regardless of the bundle's display name
+// ("ChessCoach"): userData path (~/Library/Application Support/chess-ai) and
+// the safeStorage keychain entry are derived from it, and existing users have
+// their games and encrypted API key under the dev-era identity.
+app.setName('chess-ai')
+
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.chessai.coach')
 

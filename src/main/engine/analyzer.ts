@@ -1,6 +1,11 @@
 import { Chess } from 'chess.js'
 import type { MoveEval } from '../../shared/types'
-import { getGamePgn, getGameSummary, setAnalysisResult, setAnalysisStatus } from '../db/repos/gamesRepo'
+import {
+  getGamePgn,
+  getGameSummary,
+  setAnalysisResult,
+  setAnalysisStatus
+} from '../db/repos/gamesRepo'
 import { bulkInsertMoves } from '../db/repos/movesRepo'
 import {
   classify,
@@ -68,7 +73,10 @@ function toWhitePov(fen: string, score: Score): { cp: number | null; mate: numbe
     // mate 0 = side to move is checkmated
     const mate = score.mate === 0 ? (whiteToMove ? -0.5 : 0.5) : score.mate
     const whiteMate = whiteToMove ? mate : -mate
-    return { cp: null, mate: Math.round(whiteMate) === 0 ? (whiteMate > 0 ? 1 : -1) : Math.round(whiteMate) }
+    return {
+      cp: null,
+      mate: Math.round(whiteMate) === 0 ? (whiteMate > 0 ? 1 : -1) : Math.round(whiteMate)
+    }
   }
   return { cp: whiteToMove ? score.cp : -(score.cp ?? 0), mate: null }
 }

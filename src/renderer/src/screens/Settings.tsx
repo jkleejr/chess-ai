@@ -85,8 +85,14 @@ export default function Settings(): React.JSX.Element {
       <div className="settings-form">
         <div className="field">
           <label>chess.com username</label>
-          <input value={username} onChange={(e) => setUsername(e.target.value)} spellCheck={false} />
-          <span className="faint">Changing this keeps existing games; new syncs use the new name.</span>
+          <input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            spellCheck={false}
+          />
+          <span className="faint">
+            Changing this keeps existing games; new syncs use the new name.
+          </span>
         </div>
 
         <div className="field">
@@ -99,7 +105,10 @@ export default function Settings(): React.JSX.Element {
               onChange={(e) => setApiKeyInput(e.target.value)}
               spellCheck={false}
             />
-            <button onClick={() => void testKey()} disabled={testing || (!apiKey.trim() && !hasKey)}>
+            <button
+              onClick={() => void testKey()}
+              disabled={testing || (!apiKey.trim() && !hasKey)}
+            >
               {testing ? 'Testing…' : 'Test'}
             </button>
           </div>
@@ -161,8 +170,8 @@ export default function Settings(): React.JSX.Element {
             <option value="6">High — 6 engines, fastest but laggy</option>
           </select>
           <span className="faint">
-            Engines run at low system priority either way; this caps how many CPU cores analysis
-            can occupy.
+            Engines run at low system priority either way; this caps how many CPU cores analysis can
+            occupy.
           </span>
         </div>
 
@@ -198,7 +207,11 @@ export default function Settings(): React.JSX.Element {
           <button className="primary" onClick={() => void save()}>
             Save settings
           </button>
-          {saved && <span className="ok-text" style={{ marginLeft: 10 }}>Saved ✓</span>}
+          {saved && (
+            <span className="ok-text" style={{ marginLeft: 10 }}>
+              Saved ✓
+            </span>
+          )}
         </div>
       </div>
     </div>

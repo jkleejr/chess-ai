@@ -106,9 +106,7 @@ export default function GameList(): React.JSX.Element {
         )}
         {queueActive && (
           <button
-            onClick={() =>
-              void (paused ? api.analysisResume() : api.analysisPause()).then(load)
-            }
+            onClick={() => void (paused ? api.analysisResume() : api.analysisPause()).then(load)}
           >
             {paused ? '▶ Resume analysis' : '⏸ Pause analysis'}
           </button>
@@ -146,7 +144,15 @@ export default function GameList(): React.JSX.Element {
                   </span>
                 </td>
                 <td className="muted">{g.timeClass}</td>
-                <td className="muted" style={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <td
+                  className="muted"
+                  style={{
+                    maxWidth: 220,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
                   {g.openingName ?? '—'}
                 </td>
                 <td className="acc">{acc !== null ? `${acc.toFixed(1)}%` : '—'}</td>
