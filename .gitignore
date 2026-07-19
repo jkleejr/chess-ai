@@ -4,3 +4,10 @@ out
 .DS_Store
 .eslintcache
 *.log*
+
+# never commit local data, secrets, or databases
+*.db
+*.db-*
+.env
+.env.*
+*.sqlite
