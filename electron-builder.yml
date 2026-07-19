@@ -1,5 +1,5 @@
 appId: com.chessai.coach
-productName: ChessCoach
+productName: Chess Analysis
 directories:
   buildResources: build
 files:
