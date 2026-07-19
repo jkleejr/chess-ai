@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect x="0" y="0" width="1024" height="1024" rx="230" fill="#ffffff"/>
+  <g transform="translate(192, 105) scale(0.5633)">
+<g fill="#000000">
+<rect x="222" y="880" width="616" height="176" rx="38"/>
+<path d="
+M 285 900 C 268 800 266 715 282 618 C 300 478 348 358 424 278
+C 452 246 478 222 508 204 C 524 148 548 96 572 64 C 586 88 596 126 599 160
+C 608 151 618 145 628 142 C 648 114 672 96 694 88 C 704 114 709 146 709 172
+C 729 184 748 204 763 227 C 816 280 878 348 908 402 C 924 430 926 458 910 480
+C 896 508 872 536 846 558 C 786 540 700 512 616 478 C 648 546 694 604 724 664
+C 762 734 780 806 770 900 Z"/>
+</g></g>
+<g>
+  <rect x="322" y="730" width="380" height="235.6" fill="#000000"/>
+  <rect x="339.1" y="800.68" width="345.8" height="94.24000000000001" fill="#ffffff"/>
+  <text x="512.0" y="782.3032" fill="#ffffff" font-family='Helvetica Neue, Arial Narrow, Impact, sans-serif' font-stretch='condensed' font-weight="800" font-size="43.8216" letter-spacing="18.405071999999997" text-anchor="middle">C H E S S</text>
+  <text x="512.0" y="874.1872" fill="#000000" font-family='Helvetica Neue, Arial Narrow, Impact, sans-serif' font-stretch='condensed' font-weight="900" font-size="73.50720000000001" letter-spacing="1.4701440000000003" text-anchor="middle">ADVISORY</text>
+  <text x="512.0" y="945.8095999999999" fill="#ffffff" font-family='Helvetica Neue, Arial Narrow, Impact, sans-serif' font-stretch='condensed' font-weight="800" font-size="36.7536" letter-spacing="4.410431999999999" text-anchor="middle">EXPLICIT BLUNDERS</text>
+</g>
+</svg>

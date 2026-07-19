@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect x="0" y="0" width="1024" height="1024" rx="230" fill="#ffffff"/>
+  
+<g>
+  <rect x="132" y="262" width="760" height="471.2" fill="#000000"/>
+  <rect x="166.2" y="403.36" width="691.6" height="188.48000000000002" fill="#ffffff"/>
+  <text x="512.0" y="366.6064" fill="#ffffff" font-family='Helvetica Neue, Arial Narrow, Impact, sans-serif' font-stretch='condensed' font-weight="800" font-size="87.6432" letter-spacing="16.6" text-anchor="middle">M Y  C H E S S</text>
+  <text x="512.0" y="550.3744" fill="#000000" font-family='Helvetica Neue, Arial Narrow, Impact, sans-serif' font-stretch='condensed' font-weight="900" font-size="147.01440000000002" letter-spacing="2.9402880000000007" text-anchor="middle">ADVISORY</text>
+  <text x="512.0" y="693.6192" fill="#ffffff" font-family='Helvetica Neue, Arial Narrow, Impact, sans-serif' font-stretch='condensed' font-weight="800" font-size="73.5072" letter-spacing="8.820863999999998" text-anchor="middle">EXPLICIT BLUNDERS</text>
+</g>
+</svg>
