@@ -29,7 +29,7 @@ function knight({ detail = DETAIL, strokeW = 1.5 } = {}) {
 }
 
 // White macOS rounded tile; knight + a chess.com-style two-tier pedestal base.
-function icon({ knightScale = 19.6, ty = 16, opts = {} } = {}) {
+function icon({ knightScale = 22, ty = -55, opts = {} } = {}) {
   const size = 45 * knightScale
   const tx = (1024 - size) / 2
   const bottom = ty + 39 * knightScale // knight art sits on y=39 of its 45u box

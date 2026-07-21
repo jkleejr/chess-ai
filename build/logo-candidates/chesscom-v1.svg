@@ -7,7 +7,7 @@
     </linearGradient>
   </defs>
   <rect x="0" y="0" width="1024" height="1024" rx="230" fill="#f0dbb9"/>
-  <g transform="translate(71.0, 16.0) scale(19.6)">
+  <g transform="translate(17.0, -55.0) scale(22)">
 <defs>
   <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0" stop-color="#605e59"/>
@@ -22,9 +22,9 @@
   <path d="M 24.55,10.4 L 24.1,11.85 L 24.6,12 C 27.75,13 30.25,14.49 32.5,18.75 C 34.75,23.01 35.75,29.06 35.25,39 L 35.2,39.5 L 37.45,39.5 L 37.5,39 C 38,28.94 36.62,22.15 34.25,17.66 C 31.88,13.17 28.46,11.02 25.06,10.5 L 24.55,10.4 z" style="fill:#8e8c86;stroke:none;" />
 </g></g>
   <g stroke="#26251f" stroke-width="8" stroke-linejoin="round">
-    <rect x="372.00000000000006" y="776.4000000000001" width="436.80000000000007" height="44.800000000000004" rx="12" fill="url(#baseg)"/>
-    <rect x="327.20000000000005" y="821.2" width="526.4000000000001" height="64.96000000000001" rx="16" fill="url(#baseg)"/>
+    <rect x="354.8571428571429" y="799" width="490.2857142857143" height="50.285714285714285" rx="12" fill="url(#baseg)"/>
+    <rect x="304.57142857142856" y="849.2857142857143" width="590.8571428571429" height="72.91428571428571" rx="16" fill="url(#baseg)"/>
   </g>
-  <rect x="398.00000000000006" y="784.4000000000001" width="384.80000000000007" height="7" rx="3.5" fill="#8e8c86" opacity="0.85"/>
-  <rect x="357.20000000000005" y="830.2" width="466.4000000000001" height="7" rx="3.5" fill="#8e8c86" opacity="0.85"/>
+  <rect x="380.8571428571429" y="807" width="438.2857142857143" height="7" rx="3.5" fill="#8e8c86" opacity="0.85"/>
+  <rect x="334.57142857142856" y="858.2857142857143" width="530.8571428571429" height="7" rx="3.5" fill="#8e8c86" opacity="0.85"/>
 </svg>
