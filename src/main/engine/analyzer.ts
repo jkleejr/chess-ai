@@ -19,6 +19,9 @@ import {
 import type { EnginePool } from './enginePool'
 import { bookPlyCount } from './openingBook'
 
+/** Hard ceiling on in-flight positions per game, independent of pool size. */
+const MAX_POSITION_CONCURRENCY = 8
+
 interface ReplayedMove {
   ply: number
   san: string
@@ -128,17 +131,25 @@ export async function analyzeGame(
   const fens = [moves[0].fenBefore, ...moves.map((m) => m.fenAfter)]
   const evals: PositionEval[] = new Array(fens.length)
   let done = 0
+  let next = 0
+  // Bounded workers rather than one promise per position: the pool is the only
+  // thing meant to limit engine processes, and a fan-out of N+1 simultaneous
+  // checkouts turns any pool accounting slip into N+1 spawned processes.
+  const workers = Math.max(1, Math.min(MAX_POSITION_CONCURRENCY, fens.length))
   await Promise.all(
-    fens.map(async (fen, i) => {
-      const terminal = terminalScore(fen)
-      if (terminal) {
-        evals[i] = { score: terminal, bestMoveUci: null, pv: [] }
-      } else {
-        const r = await pool.withEngine((e) => e.evaluate(fen, depth))
-        evals[i] = { score: r.score, bestMoveUci: r.bestMoveUci, pv: r.pv }
+    Array.from({ length: workers }, async () => {
+      for (let i = next++; i < fens.length; i = next++) {
+        const fen = fens[i]
+        const terminal = terminalScore(fen)
+        if (terminal) {
+          evals[i] = { score: terminal, bestMoveUci: null, pv: [] }
+        } else {
+          const r = await pool.withEngine((e) => e.evaluate(fen, depth))
+          evals[i] = { score: r.score, bestMoveUci: r.bestMoveUci, pv: r.pv }
+        }
+        done++
+        onProgress?.(Math.round((done / fens.length) * 100))
       }
-      done++
-      onProgress?.(Math.round((done / fens.length) * 100))
     })
   )
 
