@@ -13,7 +13,7 @@ import type {
 import { api } from '../api'
 import AccuracyChart from '../components/AccuracyChart'
 import OpeningStats from '../components/OpeningStats'
-import { fmtTimeControl } from './GameList'
+import { fmtTimeControl } from '../format'
 import {
   ClockChart,
   HourChart,
