@@ -149,6 +149,33 @@ export interface GameListFilter {
   eco?: string
 }
 
+/** An opening the user actually plays: modal line + record. */
+export interface OpeningLine {
+  eco: string
+  name: string
+  color: 'white' | 'black'
+  games: number
+  wins: number
+  losses: number
+  draws: number
+  avgAccuracy: number | null
+  line: string[] // most common SAN sequence (first ~12 plies)
+}
+
+/** A position where the user repeatedly errs early in the game. */
+export interface OpeningMistakePos {
+  fen: string
+  playedSan: string
+  playedUci: string
+  bestSan: string | null
+  bestUci: string | null
+  classification: string
+  cpLoss: number | null
+  ply: number
+  openingName: string
+  times: number
+}
+
 /** Mirror-match bot: what the mimic was built from. */
 export interface BotStartResult {
   analyzedMoves: number

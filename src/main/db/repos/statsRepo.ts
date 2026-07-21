@@ -1,5 +1,125 @@
-import type { AccuracyPoint, OpeningStat, StatsFilter, TimeControlStat } from '../../../shared/types'
+import type {
+  AccuracyPoint,
+  OpeningLine,
+  OpeningMistakePos,
+  OpeningStat,
+  StatsFilter,
+  TimeControlStat
+} from '../../../shared/types'
 import { getDb } from '../database'
+
+/** The user's real openings: per eco+color, record + the modal move sequence. */
+export function openingLines(minGames = 3, maxPlies = 12): OpeningLine[] {
+  const rows = getDb()
+    .prepare(
+      `SELECT g.id, g.eco_code AS eco, COALESCE(g.opening_name, g.eco_code) AS name,
+              g.user_color AS color, g.result,
+              CASE WHEN g.analysis_status = 'analyzed'
+                   THEN (CASE WHEN g.user_color = 'white' THEN g.accuracy_white ELSE g.accuracy_black END)
+              END AS acc,
+              m.ply, m.san
+       FROM games g JOIN moves m ON m.game_id = g.id
+       WHERE g.eco_code IS NOT NULL AND m.ply <= ?
+       ORDER BY g.id, m.ply`
+    )
+    .all(maxPlies) as {
+    id: number
+    eco: string
+    name: string
+    color: 'white' | 'black'
+    result: string
+    acc: number | null
+    ply: number
+    san: string
+  }[]
+
+  interface Group {
+    eco: string
+    name: string
+    color: 'white' | 'black'
+    games: number
+    wins: number
+    losses: number
+    draws: number
+    accSum: number
+    accN: number
+    seqCounts: Map<string, number>
+  }
+  const perGame = new Map<number, { key: string; meta: (typeof rows)[number]; sans: string[] }>()
+  for (const r of rows) {
+    let g = perGame.get(r.id)
+    if (!g) {
+      g = { key: `${r.eco}:${r.color}`, meta: r, sans: [] }
+      perGame.set(r.id, g)
+    }
+    g.sans.push(r.san)
+  }
+  const groups = new Map<string, Group>()
+  for (const g of perGame.values()) {
+    let grp = groups.get(g.key)
+    if (!grp) {
+      grp = {
+        eco: g.meta.eco,
+        name: g.meta.name,
+        color: g.meta.color,
+        games: 0,
+        wins: 0,
+        losses: 0,
+        draws: 0,
+        accSum: 0,
+        accN: 0,
+        seqCounts: new Map()
+      }
+      groups.set(g.key, grp)
+    }
+    grp.games++
+    if (g.meta.result === 'win') grp.wins++
+    else if (g.meta.result === 'loss') grp.losses++
+    else grp.draws++
+    if (g.meta.acc !== null) {
+      grp.accSum += g.meta.acc
+      grp.accN++
+    }
+    const seq = g.sans.join(' ')
+    grp.seqCounts.set(seq, (grp.seqCounts.get(seq) ?? 0) + 1)
+  }
+  return [...groups.values()]
+    .filter((g) => g.games >= minGames)
+    .sort((a, b) => b.games - a.games)
+    .map((g) => {
+      const modal = [...g.seqCounts.entries()].sort((a, b) => b[1] - a[1])[0][0]
+      return {
+        eco: g.eco,
+        name: g.name,
+        color: g.color,
+        games: g.games,
+        wins: g.wins,
+        losses: g.losses,
+        draws: g.draws,
+        avgAccuracy: g.accN ? g.accSum / g.accN : null,
+        line: modal.split(' ')
+      }
+    })
+}
+
+/** Early-game positions where the user repeatedly plays a mistake/blunder. */
+export function openingMistakes(limit = 9): OpeningMistakePos[] {
+  return getDb()
+    .prepare(
+      `SELECT m.fen_before AS fen, m.san AS playedSan, m.uci AS playedUci,
+              m.best_move_san AS bestSan, m.best_move_uci AS bestUci,
+              m.classification, MAX(m.cp_loss) AS cpLoss, m.ply,
+              COALESCE(g.opening_name, g.eco_code, 'Unknown opening') AS openingName,
+              COUNT(*) AS times
+       FROM moves m JOIN games g ON g.id = m.game_id
+       WHERE m.is_user_move = 1 AND m.ply <= 20
+         AND m.classification IN ('mistake', 'blunder')
+       GROUP BY m.fen_before, m.san
+       ORDER BY times DESC, cpLoss DESC
+       LIMIT ?`
+    )
+    .all(limit) as OpeningMistakePos[]
+}
 
 function filterSql(filter?: StatsFilter): { cond: string; params: unknown[] } {
   const conds: string[] = []

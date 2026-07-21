@@ -4,6 +4,7 @@ import GameList from './screens/GameList'
 import GameReview from './screens/GameReview'
 import Insights from './screens/Insights'
 import Onboarding from './screens/Onboarding'
+import Openings from './screens/Openings'
 import Play from './screens/Play'
 import Settings from './screens/Settings'
 import { useAppStore } from './stores/appStore'
@@ -49,6 +50,12 @@ function Shell(): React.JSX.Element {
             Play
           </NavLink>
           <NavLink
+            to="/openings"
+            className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+          >
+            Openings
+          </NavLink>
+          <NavLink
             to="/insights"
             className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
           >
@@ -68,6 +75,7 @@ function Shell(): React.JSX.Element {
           <Route path="/games" element={<GameList />} />
           <Route path="/game/:id" element={<GameReview />} />
           <Route path="/play" element={<Play />} />
+          <Route path="/openings" element={<Openings />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<Navigate to="/games" replace />} />

@@ -27,6 +27,8 @@ export const IPC = {
   statsMistakeTags: 'stats:mistakeTags',
   statsExtended: 'stats:extended',
   statsTimeControls: 'stats:timeControls',
+  openingsLines: 'openings:lines',
+  openingsMistakes: 'openings:mistakes',
   botStart: 'bot:start',
   botMove: 'bot:move',
   botStop: 'bot:stop',

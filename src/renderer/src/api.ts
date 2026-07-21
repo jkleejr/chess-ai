@@ -3,6 +3,8 @@ import type {
   AccuracyPoint,
   BotMove,
   BotStartResult,
+  OpeningLine,
+  OpeningMistakePos,
   ExtendedStats,
   AnalysisStatusInfo,
   CostSummary,
@@ -71,6 +73,9 @@ export const api = {
   extendedStats: (filter?: StatsFilter) =>
     invoke('stats:extended', filter) as Promise<ExtendedStats>,
   timeControlStats: () => invoke('stats:timeControls') as Promise<TimeControlStat[]>,
+
+  openingLines: () => invoke('openings:lines') as Promise<OpeningLine[]>,
+  openingMistakes: () => invoke('openings:mistakes') as Promise<OpeningMistakePos[]>,
 
   botStart: () => invoke('bot:start') as Promise<BotStartResult>,
   botMove: (fen: string, ply: number) => invoke('bot:move', fen, ply) as Promise<BotMove | null>,

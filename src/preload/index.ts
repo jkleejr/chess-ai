@@ -29,6 +29,8 @@ const INVOKE_CHANNELS = [
   'stats:mistakeTags',
   'stats:extended',
   'stats:timeControls',
+  'openings:lines',
+  'openings:mistakes',
   'bot:start',
   'bot:move',
   'bot:stop'

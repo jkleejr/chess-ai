@@ -592,6 +592,99 @@ progress {
   user-select: text;
 }
 
+/* ---------- openings ---------- */
+
+.op-section {
+  margin-top: 30px;
+  margin-bottom: 4px;
+  font-size: 16px;
+}
+
+.op-sub {
+  margin-top: 18px;
+  margin-bottom: 12px;
+  color: var(--text-dim);
+}
+
+.op-caption {
+  font-size: 12.5px;
+  margin-bottom: 16px;
+}
+
+.op-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.op-card {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.op-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.op-head b {
+  font-size: 13.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.op-head .faint {
+  flex-shrink: 0;
+}
+
+.op-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.op-summary {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #c9c9c9;
+}
+
+.op-ideas {
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+.line-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.line-controls button {
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+.line-ticker {
+  font-size: 10.5px;
+  color: var(--text-faint);
+  margin-left: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ---------- insights ---------- */
 
 .insights-head {
