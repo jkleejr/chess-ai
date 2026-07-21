@@ -623,6 +623,9 @@ progress {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  /* grid items default to min-width:auto, which lets long names/tickers
+     blow the card past its track */
+  min-width: 0;
 }
 
 .op-head {
@@ -664,16 +667,24 @@ progress {
   color: var(--text-dim);
 }
 
+.line-board {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
 .line-controls {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-top: 8px;
+  min-width: 0;
 }
 
 .line-controls button {
   padding: 2px 8px;
   font-size: 12px;
+  flex-shrink: 0;
 }
 
 .line-ticker {
@@ -683,6 +694,10 @@ progress {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  /* must be able to shrink, or the ellipsis never kicks in and the move
+     list overflows across the card footer */
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 /* ---------- insights ---------- */

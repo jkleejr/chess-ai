@@ -43,7 +43,7 @@ export default function LineBoard({ line, orientation, initialPly }: Props): Rea
     .join(' ')
 
   return (
-    <div>
+    <div className="line-board">
       <Chessboard
         options={{
           position: pos.fen,
