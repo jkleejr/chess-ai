@@ -38,49 +38,58 @@ function Shell(): React.JSX.Element {
   const isReview = location.pathname.startsWith('/game/')
   return (
     <div className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
-          <span className="knight">♞</span>My Chess
-        </div>
-        <nav>
-          <NavLink to="/games" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-            Games
-          </NavLink>
-          <NavLink to="/play" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-            Play
-          </NavLink>
-          <NavLink
-            to="/openings"
-            className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-          >
-            Openings
-          </NavLink>
-          <NavLink
-            to="/insights"
-            className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-          >
-            Insights
-          </NavLink>
-          <NavLink
-            to="/settings"
-            className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-          >
-            Settings
-          </NavLink>
-        </nav>
-        <SidebarStatus />
-      </aside>
-      <main className={`main-content${isReview ? ' no-pad' : ''}`}>
-        <Routes>
-          <Route path="/games" element={<GameList />} />
-          <Route path="/game/:id" element={<GameReview />} />
-          <Route path="/play" element={<Play />} />
-          <Route path="/openings" element={<Openings />} />
-          <Route path="/insights" element={<Insights />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="*" element={<Navigate to="/games" replace />} />
-        </Routes>
-      </main>
+      <div className="titlebar" />
+      <div className="shell-body">
+        <aside className="sidebar">
+          <div className="brand">
+            <span className="knight">♞</span>My Chess
+          </div>
+          <nav>
+            <NavLink
+              to="/games"
+              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+            >
+              Games
+            </NavLink>
+            <NavLink
+              to="/play"
+              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+            >
+              Play
+            </NavLink>
+            <NavLink
+              to="/openings"
+              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+            >
+              Openings
+            </NavLink>
+            <NavLink
+              to="/insights"
+              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+            >
+              Insights
+            </NavLink>
+            <NavLink
+              to="/settings"
+              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+            >
+              Settings
+            </NavLink>
+          </nav>
+          <SidebarStatus />
+        </aside>
+        <main className={`main-content${isReview ? ' no-pad' : ''}`}>
+          <Routes>
+            <Route path="/games" element={<GameList />} />
+            <Route path="/game/:id" element={<GameReview />} />
+            <Route path="/play" element={<Play />} />
+            <Route path="/openings" element={<Openings />} />
+            <Route path="/insights" element={<Insights />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="*" element={<Navigate to="/games" replace />} />
+          </Routes>
+        </main>
+      </div>
     </div>
   )
 }
