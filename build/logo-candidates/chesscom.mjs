@@ -5,6 +5,7 @@
 import { writeFileSync } from 'fs'
 
 // Colors sampled from the reference screenshot (chess.com classic black knight)
+const TILE_BG = '#f0dbb9' // the screenshot's cream background (chess.com light square)
 const OUTLINE = '#26251f'
 const BODY_TOP = '#605e59'
 const BODY_BOTTOM = '#3b3a36'
@@ -46,7 +47,7 @@ function icon({ knightScale = 17.5, ty = 70, opts = {} } = {}) {
       <stop offset="1" stop-color="${BODY_BOTTOM}"/>
     </linearGradient>
   </defs>
-  <rect x="0" y="0" width="1024" height="1024" rx="230" fill="#ffffff"/>
+  <rect x="0" y="0" width="1024" height="1024" rx="230" fill="${TILE_BG}"/>
   <g transform="translate(${tx.toFixed(1)}, ${ty.toFixed(1)}) scale(${knightScale})">${knight(opts)}</g>
   <g stroke="${OUTLINE}" stroke-width="8" stroke-linejoin="round">
     <rect x="${cx - collarW / 2}" y="${bottom - 4}" width="${collarW}" height="${collarH}" rx="12" fill="url(#baseg)"/>

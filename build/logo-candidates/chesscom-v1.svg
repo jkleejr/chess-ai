@@ -6,7 +6,7 @@
       <stop offset="1" stop-color="#3b3a36"/>
     </linearGradient>
   </defs>
-  <rect x="0" y="0" width="1024" height="1024" rx="230" fill="#ffffff"/>
+  <rect x="0" y="0" width="1024" height="1024" rx="230" fill="#f0dbb9"/>
   <g transform="translate(118.3, 70.0) scale(17.5)">
 <defs>
   <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
