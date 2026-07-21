@@ -31,6 +31,7 @@ export const IPC = {
   openingsMistakes: 'openings:mistakes',
   botStart: 'bot:start',
   botMove: 'bot:move',
+  botEval: 'bot:eval',
   botStop: 'bot:stop',
   styleReportGet: 'styleReport:get',
 

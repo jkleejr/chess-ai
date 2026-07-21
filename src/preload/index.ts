@@ -33,6 +33,7 @@ const INVOKE_CHANNELS = [
   'openings:mistakes',
   'bot:start',
   'bot:move',
+  'bot:eval',
   'bot:stop'
 ] as const
 

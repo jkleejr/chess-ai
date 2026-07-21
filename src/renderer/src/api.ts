@@ -1,6 +1,7 @@
 // Typed facade over the preload bridge.
 import type {
   AccuracyPoint,
+  BotEval,
   BotMove,
   BotStartResult,
   OpeningLine,
@@ -79,6 +80,7 @@ export const api = {
 
   botStart: () => invoke('bot:start') as Promise<BotStartResult>,
   botMove: (fen: string, ply: number) => invoke('bot:move', fen, ply) as Promise<BotMove | null>,
+  botEval: (fen: string) => invoke('bot:eval', fen) as Promise<BotEval>,
   botStop: () => invoke('bot:stop') as Promise<void>
 }
 

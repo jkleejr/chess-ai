@@ -36,7 +36,7 @@ import {
   openingStats,
   timeControlStats
 } from '../db/repos/statsRepo'
-import { botMove, botStart, botStop } from '../bot/mimicBot'
+import { botEval, botMove, botStart, botStop } from '../bot/mimicBot'
 import { analysisQueue } from '../engine/analysisQueue'
 import { downloadStockfish, locateStockfish } from '../engine/stockfishProvision'
 import { IPC } from './channels'
@@ -185,5 +185,6 @@ export function registerIpcHandlers(win: BrowserWindow): void {
   // --- mirror-match bot ---
   ipcMain.handle(IPC.botStart, () => botStart())
   ipcMain.handle(IPC.botMove, (_e, fen: string, ply: number) => botMove(fen, ply))
+  ipcMain.handle(IPC.botEval, (_e, fen: string) => botEval(fen))
   ipcMain.handle(IPC.botStop, () => botStop())
 }

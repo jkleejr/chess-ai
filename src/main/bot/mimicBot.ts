@@ -9,7 +9,7 @@
 // (captures/checks), matching the user's attacking profile. Errors are capped
 // so the bot is never MORE careless than the data says the user is.
 import { Chess } from 'chess.js'
-import type { BotMove, BotStartResult, Phase } from '../../shared/types'
+import type { BotEval, BotMove, BotStartResult, Phase } from '../../shared/types'
 import { getDb } from '../db/database'
 import { phaseOf } from '../db/repos/extendedStatsRepo'
 import { UciEngine } from '../engine/uciEngine'
@@ -106,12 +106,7 @@ function isForcing(chess: Chess, uci: string): boolean {
 
 export async function botStart(): Promise<BotStartResult> {
   model = buildModel()
-  if (!engine || engine.dead) {
-    const status = await locateStockfish()
-    if (status.state !== 'ready' || !status.path) throw new Error('Engine not available')
-    engine = new UciEngine(status.path)
-    await engine.init(1, 64)
-  }
+  await ensureEngine()
   const bookFens = getDb()
     .prepare(`SELECT DISTINCT fen_before AS f FROM moves WHERE is_user_move = 1 AND ply <= ?`)
     .all(BOOK_MAX_PLY) as { f: string }[]
@@ -128,6 +123,42 @@ export async function botStart(): Promise<BotStartResult> {
       blunderPct: model![phase].blunderRate * 100
     }))
   }
+}
+
+async function ensureEngine(): Promise<UciEngine> {
+  if (!engine || engine.dead) {
+    const status = await locateStockfish()
+    if (status.state !== 'ready' || !status.path) throw new Error('Engine not available')
+    engine = new UciEngine(status.path)
+    await engine.init(1, 64)
+  }
+  return engine
+}
+
+/** Quick single-PV eval for the live-analysis panel. White-POV score. */
+export async function botEval(fen: string): Promise<BotEval> {
+  const e = await ensureEngine()
+  const res = await e.evaluate(fen, ENGINE_DEPTH)
+  const whiteToMove = fen.split(' ')[1] === 'w'
+  const cpWhite = res.score.cp === null ? null : whiteToMove ? res.score.cp : -res.score.cp
+  const mateWhite = res.score.mate === null ? null : whiteToMove ? res.score.mate : -res.score.mate
+  // Convert the engine PV (UCI) to SAN for display
+  const chess = new Chess(fen)
+  const pvSans: string[] = []
+  for (const uci of res.pv.slice(0, 4)) {
+    try {
+      const mv = chess.move({
+        from: uci.slice(0, 2),
+        to: uci.slice(2, 4),
+        promotion: uci.length > 4 ? uci.slice(4) : undefined
+      })
+      if (!mv) break
+      pvSans.push(mv.san)
+    } catch {
+      break
+    }
+  }
+  return { cpWhite, mateWhite, bestSan: pvSans[0] ?? null, pvSans }
 }
 
 export function botStop(): void {
@@ -155,13 +186,8 @@ export async function botMove(fen: string, ply: number): Promise<BotMove | null>
   }
 
   // 2) engine candidates, filtered through the user's error distribution
-  if (!engine || engine.dead) {
-    const status = await locateStockfish()
-    if (status.state !== 'ready' || !status.path) throw new Error('Engine not available')
-    engine = new UciEngine(status.path)
-    await engine.init(1, 64)
-  }
-  const raw = await engine.evaluateMulti(fen, ENGINE_DEPTH, Math.min(MULTIPV, legal.length))
+  const eng = await ensureEngine()
+  const raw = await eng.evaluateMulti(fen, ENGINE_DEPTH, Math.min(MULTIPV, legal.length))
   if (raw.length === 0) throw new Error('engine returned no candidates')
   const bestCp = cpOf(raw[0].score)
   const candidates = raw.map((c) => ({ uci: c.uci, cpLoss: Math.max(0, bestCp - cpOf(c.score)) }))

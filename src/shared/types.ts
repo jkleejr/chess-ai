@@ -189,6 +189,14 @@ export interface BotMove {
   cpLoss: number | null
 }
 
+/** Free live analysis for the Play tab (Stockfish only, no LLM). */
+export interface BotEval {
+  cpWhite: number | null // centipawns from White's POV
+  mateWhite: number | null // mate distance from White's POV (+ = White mates)
+  bestSan: string | null
+  pvSans: string[] // first few moves of the engine line, as SAN
+}
+
 /** Optional scoping for stats queries: one category OR one exact control. */
 export interface StatsFilter {
   timeClass?: string
