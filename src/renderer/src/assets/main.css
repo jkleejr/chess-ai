@@ -557,6 +557,41 @@ progress {
   color: var(--text-dim);
 }
 
+/* ---------- play (mirror-match bot) ---------- */
+
+.play-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.play-board {
+  width: clamp(300px, min(calc(100vh - 140px), calc(100vw - 640px)), 640px);
+  flex-shrink: 0;
+}
+
+.play-side {
+  flex: 1;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.play-side h1 {
+  margin-bottom: 6px;
+}
+
+.play-status {
+  font-size: 14px;
+}
+
+.move-scroll {
+  max-height: 32vh;
+  overflow-y: auto;
+  user-select: text;
+}
+
 /* ---------- insights ---------- */
 
 .insights-head {

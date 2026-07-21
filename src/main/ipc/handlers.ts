@@ -30,6 +30,7 @@ import {
 } from '../db/repos/settingsRepo'
 import { extendedStats } from '../db/repos/extendedStatsRepo'
 import { accuracyOverTime, openingStats, timeControlStats } from '../db/repos/statsRepo'
+import { botMove, botStart, botStop } from '../bot/mimicBot'
 import { analysisQueue } from '../engine/analysisQueue'
 import { downloadStockfish, locateStockfish } from '../engine/stockfishProvision'
 import { IPC } from './channels'
@@ -171,4 +172,9 @@ export function registerIpcHandlers(win: BrowserWindow): void {
   ipcMain.handle(IPC.statsTimeControls, () => timeControlStats())
   ipcMain.handle(IPC.statsMistakeTags, () => mistakeTagCounts())
   ipcMain.handle(IPC.statsExtended, (_e, filter?: StatsFilter) => extendedStats(filter))
+
+  // --- mirror-match bot ---
+  ipcMain.handle(IPC.botStart, () => botStart())
+  ipcMain.handle(IPC.botMove, (_e, fen: string, ply: number) => botMove(fen, ply))
+  ipcMain.handle(IPC.botStop, () => botStop())
 }

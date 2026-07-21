@@ -28,7 +28,10 @@ const INVOKE_CHANNELS = [
   'stats:accuracy',
   'stats:mistakeTags',
   'stats:extended',
-  'stats:timeControls'
+  'stats:timeControls',
+  'bot:start',
+  'bot:move',
+  'bot:stop'
 ] as const
 
 const EVENT_CHANNELS = [

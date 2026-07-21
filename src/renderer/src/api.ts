@@ -1,6 +1,8 @@
 // Typed facade over the preload bridge.
 import type {
   AccuracyPoint,
+  BotMove,
+  BotStartResult,
   ExtendedStats,
   AnalysisStatusInfo,
   CostSummary,
@@ -68,7 +70,11 @@ export const api = {
   mistakeTags: () => invoke('stats:mistakeTags') as Promise<{ tag: string; count: number }[]>,
   extendedStats: (filter?: StatsFilter) =>
     invoke('stats:extended', filter) as Promise<ExtendedStats>,
-  timeControlStats: () => invoke('stats:timeControls') as Promise<TimeControlStat[]>
+  timeControlStats: () => invoke('stats:timeControls') as Promise<TimeControlStat[]>,
+
+  botStart: () => invoke('bot:start') as Promise<BotStartResult>,
+  botMove: (fen: string, ply: number) => invoke('bot:move', fen, ply) as Promise<BotMove | null>,
+  botStop: () => invoke('bot:stop') as Promise<void>
 }
 
 export const events = {

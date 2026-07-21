@@ -125,6 +125,36 @@ export class UciEngine {
     })
   }
 
+  /** Top-N candidate moves via MultiPV. Scores are side-to-move POV. */
+  evaluateMulti(
+    fen: string,
+    depth: number,
+    multipv: number
+  ): Promise<{ uci: string; score: Score }[]> {
+    return this.run(async () => {
+      // last info line per multipv index at the deepest depth seen
+      const byIndex = new Map<number, { uci: string; score: Score }>()
+      const done = this.waitFor(
+        (l) => l.startsWith('bestmove'),
+        (l) => {
+          if (!l.startsWith('info ') || !l.includes(' score ') || !l.includes(' pv ')) return
+          const mIdx = l.match(/ multipv (\d+)/)
+          const score = parseScore(l)
+          const pv = parsePv(l)
+          if (score && pv.length > 0) {
+            byIndex.set(mIdx ? parseInt(mIdx[1], 10) : 1, { uci: pv[0], score })
+          }
+        }
+      )
+      this.send(`setoption name MultiPV value ${multipv}`)
+      this.send(`position fen ${fen}`)
+      this.send(`go depth ${depth}`)
+      await done
+      this.send('setoption name MultiPV value 1')
+      return [...byIndex.entries()].sort((a, b) => a[0] - b[0]).map(([, v]) => v)
+    })
+  }
+
   quit(): void {
     if (this.dead) return
     try {

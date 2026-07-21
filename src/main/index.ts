@@ -50,13 +50,34 @@ app.whenReady().then(async () => {
 
   // Headless dev harness: COACH_SMOKE_GAME=<id> runs one real coaching call
   // (no window) and exits. Used to verify the pipeline without the UI.
-  if (process.env.COACH_SMOKE_GAME || process.env.STYLE_SMOKE) {
+  if (process.env.COACH_SMOKE_GAME || process.env.STYLE_SMOKE || process.env.BOT_SMOKE) {
     openDb()
     try {
       if (process.env.COACH_SMOKE_GAME) {
         const { explainGame } = await import('./coach/gameCoach')
         const insight = await explainGame(parseInt(process.env.COACH_SMOKE_GAME, 10))
         console.log('COACH_SMOKE_OK ' + JSON.stringify(insight))
+      } else if (process.env.BOT_SMOKE) {
+        // Bot plays itself for N plies; prints each move + source.
+        const { botStart, botMove, botStop } = await import('./bot/mimicBot')
+        const { Chess } = await import('chess.js')
+        const info = await botStart()
+        console.log('BOT_INFO ' + JSON.stringify(info))
+        const chess = new Chess()
+        for (let ply = 1; ply <= parseInt(process.env.BOT_SMOKE, 10); ply++) {
+          const mv = await botMove(chess.fen(), ply)
+          if (!mv) break
+          const applied = chess.move({
+            from: mv.uci.slice(0, 2),
+            to: mv.uci.slice(2, 4),
+            promotion: mv.uci.length > 4 ? mv.uci.slice(4) : undefined
+          })
+          if (!applied) throw new Error(`illegal bot move ${mv.uci} at ply ${ply}`)
+          console.log(`BOT_MOVE ${ply} ${applied.san} src=${mv.source} cpLoss=${mv.cpLoss}`)
+          if (chess.isGameOver()) break
+        }
+        botStop()
+        console.log('BOT_SMOKE_OK')
       } else {
         const { generateStyleReport } = await import('./coach/styleReport')
         const report = await generateStyleReport()

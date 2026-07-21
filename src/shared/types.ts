@@ -149,6 +149,19 @@ export interface GameListFilter {
   eco?: string
 }
 
+/** Mirror-match bot: what the mimic was built from. */
+export interface BotStartResult {
+  analyzedMoves: number
+  bookPositions: number
+  phases: { phase: Phase; blunderPct: number }[]
+}
+
+export interface BotMove {
+  uci: string
+  source: 'book' | 'engine'
+  cpLoss: number | null
+}
+
 /** Optional scoping for stats queries: one category OR one exact control. */
 export interface StatsFilter {
   timeClass?: string

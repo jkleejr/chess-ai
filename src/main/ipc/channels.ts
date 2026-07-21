@@ -27,6 +27,9 @@ export const IPC = {
   statsMistakeTags: 'stats:mistakeTags',
   statsExtended: 'stats:extended',
   statsTimeControls: 'stats:timeControls',
+  botStart: 'bot:start',
+  botMove: 'bot:move',
+  botStop: 'bot:stop',
   styleReportGet: 'styleReport:get',
 
   // push events (webContents.send)
