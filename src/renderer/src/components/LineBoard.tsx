@@ -53,14 +53,21 @@ export default function LineBoard({ line, orientation, initialPly }: Props): Rea
           animationDurationInMs: 120,
           darkSquareStyle: { backgroundColor: '#6f7276' },
           lightSquareStyle: { backgroundColor: '#e9e9e7' },
-          boardStyle: { borderRadius: '8px', overflow: 'hidden' }
+          // height:auto overrides the library default of height:100%, which
+          // would otherwise make the board claim the whole flex column and
+          // squeeze the controls row below it out of existence.
+          boardStyle: { borderRadius: '8px', overflow: 'hidden', height: 'auto' }
         }}
       />
       <div className="line-controls">
         <button className="small" onClick={() => setPly(0)} disabled={ply === 0}>
           ⏮
         </button>
-        <button className="small" onClick={() => setPly((p) => Math.max(0, p - 1))} disabled={ply === 0}>
+        <button
+          className="small"
+          onClick={() => setPly((p) => Math.max(0, p - 1))}
+          disabled={ply === 0}
+        >
           ‹
         </button>
         <button

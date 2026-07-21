@@ -743,6 +743,10 @@ progress {
   align-items: center;
   gap: 4px;
   min-width: 0;
+  /* react-chessboard's default boardStyle sets height:100%, so the board tries
+     to claim the whole column. Without this the controls row shrinks to zero
+     height and its buttons/ticker paint on top of the text below the board. */
+  flex-shrink: 0;
 }
 
 .line-controls button {
