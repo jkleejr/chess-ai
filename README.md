@@ -5,7 +5,8 @@ every move with a local Stockfish engine, and uses Claude to explain your
 mistakes, track your recurring tendencies, and coach you toward improvement —
 like chess.com's Game Review, but personalized to *your* play and history.
 
-<img width="1273" height="830" alt="Screenshot 2026-07-21 at 3 19 05 AM" src="https://github.com/user-attachments/assets/0fe36e12-f28f-4b7d-b055-55ca9dfef550" />
+<img width="1267" height="832" alt="Screenshot 2026-07-21 at 3 39 01 AM" src="https://github.com/user-attachments/assets/f89c1b1d-2723-4e0f-9545-003a06c724c0" />
+
 
 ## What it does
 
