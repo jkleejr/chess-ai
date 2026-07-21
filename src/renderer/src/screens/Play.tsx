@@ -7,6 +7,13 @@ import { nameOpening } from '../data/openingNames'
 
 type Color = 'white' | 'black'
 
+const START_FEN = new Chess().fen()
+
+/** Side to move, read straight off the FEN — no move history needed. */
+function turnOf(fen: string): Color {
+  return fen.split(' ')[1] === 'w' ? 'white' : 'black'
+}
+
 function statusOf(chess: Chess, you: Color): string | null {
   if (!chess.isGameOver()) return null
   if (chess.isCheckmate()) {
@@ -44,7 +51,7 @@ function verdictOf(san: string, lossCp: number): Verdict {
 
 export default function Play(): React.JSX.Element {
   const chessRef = useRef(new Chess())
-  const [fens, setFens] = useState<string[]>([chessRef.current.fen()])
+  const [fens, setFens] = useState<string[]>([START_FEN])
   const [viewPly, setViewPly] = useState(0)
   const [you, setYou] = useState<Color>('white')
   const [started, setStarted] = useState(false)
@@ -53,6 +60,10 @@ export default function Play(): React.JSX.Element {
   const [error, setError] = useState<string | null>(null)
   const [sanMoves, setSanMoves] = useState<string[]>([])
   const [analysisOn, setAnalysisOn] = useState(true)
+  // Derived from the live Chess object at mutation time rather than during
+  // render: statusOf() needs the full move history (repetition, 50-move), so
+  // it cannot be recomputed from a FEN alone.
+  const [gameOver, setGameOver] = useState<string | null>(null)
   const [evalInfo, setEvalInfo] = useState<BotEval | null>(null)
   const [verdict, setVerdict] = useState<Verdict | null>(null)
   // eval per position index, for scoring the user's last move
@@ -67,7 +78,6 @@ export default function Play(): React.JSX.Element {
 
   const latestPly = fens.length - 1
   const atLatest = viewPly === latestPly
-  const gameOver = statusOf(chessRef.current, you)
 
   /** Evaluate position #idx (its fen) and, when it follows a user move, grade it. */
   const runAnalysis = useCallback(
@@ -109,8 +119,9 @@ export default function Play(): React.JSX.Element {
         return next
       })
       setSanMoves(chess.history())
+      setGameOver(statusOf(chess, you))
     },
-    [runAnalysis]
+    [runAnalysis, you]
   )
 
   const requestBotMove = useCallback(async (): Promise<void> => {
@@ -140,17 +151,18 @@ export default function Play(): React.JSX.Element {
     setError(null)
     setYou(color)
     chessRef.current = new Chess()
-    setFens([chessRef.current.fen()])
+    setFens([START_FEN])
     setViewPly(0)
     setSanMoves([])
     setEvalInfo(null)
     setVerdict(null)
+    setGameOver(null)
     evalsRef.current = new Map()
     try {
       const info = await api.botStart()
       setBot(info)
       setStarted(true)
-      void runAnalysis(0, chessRef.current.fen(), false, null)
+      void runAnalysis(0, START_FEN, false, null)
       if (color === 'black') void requestBotMove()
     } catch (e) {
       setError((e as Error).message.replace(/^Error invoking remote method '[^']+': (Error: )?/, ''))
@@ -206,7 +218,7 @@ export default function Play(): React.JSX.Element {
   }
 
   const opening = nameOpening(sanMoves)
-  const yourTurn = started && (chessRef.current.turn() === 'w' ? 'white' : 'black') === you
+  const yourTurn = started && turnOf(fens[latestPly]) === you
 
   return (
     <div className="play-layout">

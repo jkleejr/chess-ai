@@ -110,7 +110,7 @@ class AnalysisQueue {
     if (this.running || this.paused) return
     this.running = true
     try {
-      const pool = await this.ensurePool()
+      let pool = await this.ensurePool()
       if (!pool) return // engine not available yet; queue stays intact
 
       const depth = parseInt(getSetting(SETTING_KEYS.engineDepth) ?? '16', 10)
@@ -140,9 +140,13 @@ class AnalysisQueue {
             setAnalysisStatus(gameId, 'error')
           }
           // Engine may have died mid-game; rebuild pool before continuing.
+          // The rebuilt pool MUST replace `pool` — continuing to hand the
+          // shut-down one to analyzeGame makes every later game spawn a fresh
+          // process per position.
           this.resetPool()
           const next = await this.ensurePool()
           if (!next) break
+          pool = next
         }
       }
     } finally {

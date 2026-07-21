@@ -30,6 +30,10 @@ interface ErrorModel {
 }
 
 let engine: UciEngine | null = null
+/** In-flight spawn, shared so concurrent callers never start a second engine. */
+let enginePending: Promise<UciEngine> | null = null
+/** Bumped by botStop() so a spawn started before the stop discards itself. */
+let engineGen = 0
 let model: Record<Phase, ErrorModel> | null = null
 
 function cpOf(score: Score): number {
@@ -126,13 +130,33 @@ export async function botStart(): Promise<BotStartResult> {
 }
 
 async function ensureEngine(): Promise<UciEngine> {
-  if (!engine || engine.dead) {
-    const status = await locateStockfish()
-    if (status.state !== 'ready' || !status.path) throw new Error('Engine not available')
-    engine = new UciEngine(status.path)
-    await engine.init(1, 64)
+  if (engine && !engine.dead) return engine
+  // The live-analysis panel calls botEval on every position change, so several
+  // callers can arrive while the engine is missing. Without a shared promise
+  // each one spawns its own process and all but the last leak un-quit.
+  if (!enginePending) {
+    const gen = engineGen
+    enginePending = (async () => {
+      try {
+        const status = await locateStockfish()
+        if (status.state !== 'ready' || !status.path) throw new Error('Engine not available')
+        const fresh = new UciEngine(status.path)
+        await fresh.init(1, 64)
+        // botStop() may have run while we were starting up — don't resurrect.
+        if (gen !== engineGen) {
+          fresh.quit()
+          throw new Error('bot stopped while the engine was starting')
+        }
+        engine = fresh
+        return fresh
+      } finally {
+        // Always clear, so a later death (or failure) spawns a fresh engine
+        // instead of handing out this settled promise forever.
+        if (gen === engineGen) enginePending = null
+      }
+    })()
   }
-  return engine
+  return enginePending
 }
 
 /** Quick single-PV eval for the live-analysis panel. White-POV score. */
@@ -164,6 +188,10 @@ export async function botEval(fen: string): Promise<BotEval> {
 export function botStop(): void {
   engine?.quit()
   engine = null
+  // Bumping the generation makes any in-flight spawn quit itself on arrival
+  // rather than installing an engine after the bot was stopped.
+  engineGen++
+  enginePending = null
   model = null
 }
 
