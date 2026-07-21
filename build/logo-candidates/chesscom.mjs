@@ -29,16 +29,17 @@ function knight({ detail = DETAIL, strokeW = 1.5 } = {}) {
 }
 
 // White macOS rounded tile; knight + a chess.com-style two-tier pedestal base.
-function icon({ knightScale = 17.5, ty = 70, opts = {} } = {}) {
+function icon({ knightScale = 19.6, ty = 16, opts = {} } = {}) {
   const size = 45 * knightScale
   const tx = (1024 - size) / 2
   const bottom = ty + 39 * knightScale // knight art sits on y=39 of its 45u box
   // Base centered under the piece's footprint (u15..u38 → weighted center)
   const cx = tx + 26.5 * knightScale
-  const collarW = 390
-  const plinthW = 470
-  const collarH = 40
-  const plinthH = 58
+  const k = knightScale / 17.5 // base dims proportional to the knight
+  const collarW = 390 * k
+  const plinthW = 470 * k
+  const collarH = 40 * k
+  const plinthH = 58 * k
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <defs>
